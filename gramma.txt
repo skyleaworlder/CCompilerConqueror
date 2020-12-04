@@ -1,0 +1,55 @@
+~ 许多 $ 符号只是为了人工消除左递归
+~ 这样就减轻了程序的负担
+!letter -> int | float | double | void | if | else | while | return | + | - | * | / | = | < | > | <= | >= | == | != | += | -= | *= | /= | ( | ) | { | } | ; | , | <ID> | <INT>
+
+S -> Program
+
+~ about int a; void func() {}
+~ 声明
+Program -> GlbDefList
+GlbDefList -> GlbDef GlbDefList | $
+GlbDef     -> Type <ID> Delimiter | Type FuncTop Block FuncTop1
+
+~ 函数定义
+FuncTop -> <ID> FuncTop2 LBracket VarList RBracket
+VarList -> Param Separator VarList | Param | $
+Param   -> Type <ID>
+FuncTop1 -> $
+FuncTop2 -> $
+
+~ StsList is sentence list
+~ 块定义: 变量定义 / 语句
+Block   -> Block1 LBrace DefList StsList RBrace
+DefList -> Def DefList | $
+StsList -> Sts StsList | $
+Def     -> Type DefVariable Separator
+DefVariable -> <ID> | <ID> = Expression
+Sts     -> Expression Delimiter | RetSts | IfBlock | WhileBlock
+Block1  -> $
+
+RetSts  -> return Expression
+IfBlock -> if IfBlock1 LBracket Expression RBracket IfBlock2 Block IfElse
+IfElse  -> $ | IfElse1 else Block
+WhileBlock  -> while WhileBlock1 LBracket Expression RBracket WhileBlock2 Block
+IfBlock1 -> $
+IfBlock2 -> $
+IfElse1 -> $
+WhileBlock1 -> $
+WhileBlock2 -> $
+
+
+~ 表达式相关
+Expression -> <ID> Assign Expression | Expression Operator Expression | LBracket Expression RBracket | <ID> LBracket Arguments1 Arguments RBracket | <ID> | <INT>
+Arguments -> Expression Separator Arguments | Expression | $
+Arguments1 -> $
+
+~ 直接推导终结符
+Type -> int | float | double | void
+Operator -> + | - | * | / | < | > | <= | >= | == | !=
+Assign  -> = | += | -= | *= | /=
+LBracket -> (
+RBracket -> )
+LBrace  -> {
+RBrace  -> }
+Delimiter -> ;
+Separator -> ,

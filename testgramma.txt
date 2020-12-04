@@ -1,0 +1,8 @@
+
+
+!letter -> a | b | c | d
+
+A -> a A b
+B -> b | $
+C -> B D
+D -> $ | b A C
