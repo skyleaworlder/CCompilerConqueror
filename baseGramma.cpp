@@ -109,7 +109,6 @@ std::pair<bool, std::set<int>> BaseGrammar::mergeSet(const std::set<int> first, 
 	return{ success,temp_first };
 }
 
-
 void BaseGrammar::calcuSingleUnterminalFirstSet(int unterminal)
 {
 	for (auto derivation : this->derivation_set)
@@ -179,32 +178,23 @@ void BaseGrammar::calcuAllTerminalFirstSet()
 		this->symbol_arr[terminal_index].FIRST_SET.insert(terminal_index);
 }
 
-void BaseGrammar::calcuSingleUnterminalFollowSet(int unterminal)
+std::set<int> BaseGrammar::calcuSymbolStringFirstSet(std::vector<int> SymbolString)
 {
-	for (auto derivation : this->derivation_set)
+	int index = 0;
+	std::set<int> result; //存储结果的集合
+	for (auto single_symbol : SymbolString)
 	{
-		for (auto single_right_letter : derivation.right)
-		{
-			int next_symbol_index = 0;
-			auto res_right_letter = getSymIdByName(single_right_letter.name);
-			//说明在某个推导式的右边找到了该非终结符
-			if (res_right_letter.first == unterminal)
-			{
-				//说明该非终结符后面没有符号
-				if (next_symbol_index == derivation.right.size())
-				{
-					/* TODO */
-				}
-				//取出该非终结符后面的符号
-				auto next_symbol = derivation.right[next_symbol_index + 1];
-			}
-			else
-				next_symbol_index++;
-		}
+		index++;
+		auto res = this->mergeSet(
+			result,
+			this->symbol_arr[single_symbol].FIRST_SET,
+			false
+		);
+		result = res.second;
+		if (!this->symbol_arr[single_symbol].FIRST_SET.count(getSymByName(Epsilon).id))
+			break;
 	}
-}
-void BaseGrammar::calcuAllUnterminalFollowSet()
-{
-	for (auto terminal_index : this->terminal_set)
-		calcuSingleUnterminalFollowSet(terminal_index);
+	if (SymbolString.size() == index)
+		result.insert(getSymIdByName(Epsilon).first);
+	return result;
 }

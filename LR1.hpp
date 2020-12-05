@@ -94,6 +94,28 @@ enum Action {
 };
 
 /**
+ * @brief 为了表示类似 [A -> a·Bb, b] 这样的项目
+ * @param lr0_derivation_idx: 项目/推导式 在 LR0 derivations 中的 index
+ * @param look_forward_symbol_idx: 前瞻符号 的 index
+ */
+struct LR1Derivation {
+	// LR(0) 项目/推导式 在 LR0 derivations 中的 index
+	int lr0_derivation_idx;
+	// 前瞻符号 的 index
+	int look_forward_symbol_idx;
+
+	/**
+	 * @brief 重载判断相等，仅判断了 lr0_derivation_idx / look_forward_symbol_idx
+	 */
+	bool operator == (const LR1Derivation& input) const {
+		return (
+			this->lr0_derivation_idx == input.lr0_derivation_idx
+			&& this->look_forward_symbol_idx == input.look_forward_symbol_idx
+			);
+	}
+};
+
+/**
  * @brief LR(1) 闭包,
  *      需要注意的是，闭包中除了项目集不存在任何 property 了
  * @param id: primary key
@@ -128,27 +150,5 @@ struct ClosePkg {
                 return true;
         }
         return false;
-    }
-};
-
-/**
- * @brief 为了表示类似 [A -> a·Bb, b] 这样的项目
- * @param lr0_derivation_idx: 项目/推导式 在 LR0 derivations 中的 index
- * @param look_forward_symbol_idx: 前瞻符号 的 index
- */
-struct LR1Derivation {
-    // LR(0) 项目/推导式 在 LR0 derivations 中的 index
-    int lr0_derivation_idx;
-    // 前瞻符号 的 index
-    int look_forward_symbol_idx;
-
-    /**
-     * @brief 重载判断相等，仅判断了 lr0_derivation_idx / look_forward_symbol_idx
-     */
-    bool operator == (const LR1Derivation& input) const {
-        return (
-            this->lr0_derivation_idx == input.lr0_derivation_idx
-            && this->look_forward_symbol_idx == input.look_forward_symbol_idx
-        );
     }
 };

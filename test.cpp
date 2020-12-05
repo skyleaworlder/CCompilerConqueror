@@ -149,6 +149,7 @@ int main() {
     //test_trim();
     //test_readgramma();
     //test_string();
-    test_equal();
-	test_first();
+    //test_equal();
+	//test_first();
+
 }

@@ -164,8 +164,7 @@ public:
 	void calcuSingleUnterminalFirstSet(int unterminal);
 	void calcuAllUnterminalFirstSet();
 	void calcuAllTerminalFirstSet();
-	void calcuSingleUnterminalFollowSet(int unternimal);
-	void calcuAllUnterminalFollowSet();
+	std::set<int> calcuSymbolStringFirstSet(std::vector<int> SymbolString);
 	
 
 public:
