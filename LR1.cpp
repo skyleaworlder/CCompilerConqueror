@@ -46,11 +46,15 @@ ClosePkg LR1Gramma::calcuClosePkg(ClosePkg& I) {
 
         // 构造是左闭右开
         // 对于 [A -> alpha ·B beta, a]，这里首先取到的是 beta
-        std::vector<int> beta_a(
+        std::vector<int> beta_a;
+        std::vector<Symbol> beta_a_sym(
             lr0_drv.right.begin()+lr0_drv.dot_position+1,
             lr0_drv.right.end()
         );
+        for (const auto& elem : beta_a_sym)
+            beta_a.emplace_back(elem.id);
         beta_a.emplace_back(lr1_drv.look_forward_symbol_idx);
+
         // TODO: add calcuFirstSet of derivation
         std::set<int> beta_a_first_set; // = calcuFirstSet();
 
@@ -76,7 +80,7 @@ ClosePkg LR1Gramma::calcuClosePkg(ClosePkg& I) {
             // 对于 FIRST(beta a) 中的每个终结符 b
             for (const auto& b : beta_a_first_set) {
                 if (!Symbol::isEpsilon(this->symbol_arr[b]) && !I.isExistLR1Drv({ drv.id, b }))
-                    I.LR1_derivation_arr.emplace_back(drv.id, b);
+                    I.LR1_derivation_arr.push_back({ drv.id, b });
             }
         }
     }
@@ -85,6 +89,7 @@ ClosePkg LR1Gramma::calcuClosePkg(ClosePkg& I) {
 
 ClosePkg LR1Gramma::GO(const ClosePkg& I, const Symbol& X) {
     ClosePkg j;
+    j.id = this->C.size();
     if (Symbol::isEnd(X) || Symbol::isEpsilon(X))
         return j;
 
@@ -103,7 +108,6 @@ ClosePkg LR1Gramma::GO(const ClosePkg& I, const Symbol& X) {
         lr0_drv_dot_back.dot_position += 1;
         // TODO: 这里可能有问题，因为 C 的 size 没有变
         // 很可能存在一堆相同 id 的 C
-        j.id = this->C.size();
         j.LR1_derivation_arr.push_back({
             getLR0DrvIdByDrv(lr0_drv_dot_back).first,
             lr1_drv.look_forward_symbol_idx
@@ -111,6 +115,7 @@ ClosePkg LR1Gramma::GO(const ClosePkg& I, const Symbol& X) {
     }
     return calcuClosePkg(j);
 }
+
 
 void LR1Gramma::calcuLR1Derivations() {
     // 将 [S -> ·Program, #] 加入到 LR(1) 项目集中
@@ -152,6 +157,55 @@ void LR1Gramma::calcuLR1Derivations() {
             // 不存在，那么就往 C 里面添加
             this->C.push_back(dest_close_pkg);
             this->goto_table_tmp[{ I.id, X.id }] = this->C.size()-1;
+        }
+    }
+}
+
+void LR1Gramma::calcuActionTable() {
+    for (const auto& I : this->C) {
+        for (const auto& LR0_drv : this->derivation_set) {
+            for (const auto& terminal : this->terminal_set) {
+                if (!this->C[I.id].isExistLR1Drv({ LR0_drv.id, terminal }))
+                    continue;
+
+                //std::cout << this->lr0_derivations[LR0_drv.id].left.name << " " << LR0_drv.left.name;
+                const derivation_idx drv_idx = LR0_drv.derive_idx;
+                const symbol_idx drv_left_idx = LR0_drv.left.id;
+                const symbol_idx look_forward_sym_idx = terminal;
+                const int drv_dot_position = LR0_drv.dot_position;
+
+                if (drv_dot_position >= LR0_drv.right.size()) {
+                    if (this->symbol_arr[drv_left_idx].name == OriginPro)
+                        this->action_table[{ I.id, getSymIdByName(EndSym).first }] = { Action::ACC, -1 };
+                    else
+                        this->action_table[{ I.id, look_forward_sym_idx }] = { Action::R, drv_idx };
+                }
+                else {
+                    const Symbol dot_next_sym = LR0_drv.right[drv_dot_position];
+                    // 如果下一个不是非终结符，那就跳过
+                    if (!Symbol::isTerminal(dot_next_sym))
+                        continue;
+                    // 如果找不到，就跳过
+                    // 找不到意味着迭代器能够到达 end() 所在位置
+                    const auto iter = this->goto_table_tmp.find({ I.id, dot_next_sym.id });
+                    if (this->goto_table_tmp.end() == iter)
+                        continue;
+
+                    this->action_table[{ I.id, dot_next_sym.id }] = { Action::S, iter->second };
+                }
+            }
+        }
+    }
+}
+
+void LR1Gramma::calcuGotoTable() {
+    for (const auto& I : this->C) {
+        for (const auto& LR0_drv : this->derivation_set) {
+            for (const auto& unterminal : this->unterminal_set) {
+                const auto iter = this->goto_table_tmp.find({ I.id, unterminal });
+                if (this->goto_table_tmp.end() != iter)
+                    this->goto_table[{ I.id, unterminal }] = { Action::R, iter->second };
+            }
         }
     }
 }

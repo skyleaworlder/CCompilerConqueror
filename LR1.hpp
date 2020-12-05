@@ -188,4 +188,14 @@ public:
      * @brief LR1Gramma -- 计算 LR(1) 项集族
      */
     void calcuLR1Derivations();
+
+    /**
+     * @brief LR1Gramma -- 计算 ACTION table
+     */
+    void calcuActionTable();
+
+    /**
+     * @brief LR1Gramma -- 计算 GOTO table
+     */
+    void calcuGotoTable();
 };
