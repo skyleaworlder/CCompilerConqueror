@@ -159,8 +159,16 @@ public:
      * @param file_path: 输入的文法路径
      */
     void readGramma(const std::string file_path);
+	//将second集合中的元素加入到first集合，若with_epsilon=true，则连通epsilon一起合并，否则去掉epsilon
+	std::pair<bool, std::set<int>> mergeSet(const std::set<int> first, const std::set<int> second, bool with_epsilon);
+	void calcuSingleUnterminalFirstSet(int unterminal);
+	void calcuAllUnterminalFirstSet();
+	void calcuAllTerminalFirstSet();
+	void calcuSingleUnterminalFollowSet(int unternimal);
+	void calcuAllUnterminalFollowSet();
+	
 
-private:
+public:
 
     /**
      * @brief 根据 name 获取 id，其实也可以当成检验符号是否存在的函数
@@ -184,7 +192,8 @@ private:
         for (const auto& elem : this->symbol_arr)
             if (elem.name == name)
                 return elem;
-        return Symbol("#", Symbol::SYM_TYPE::END, -1);
+		Symbol ch("#", Symbol::SYM_TYPE::END, -1);
+        return ch;
     }
 };
 
