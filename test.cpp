@@ -83,9 +83,9 @@ void test_readgramma() {
     cout << endl;
 
     cout << "derivation vector: " << endl;
-    cout << g.derivation_set.size();
+	cout << g.derivation_set.size() << endl;
     for (auto elem : g.derivation_set) {
-        cout << "left symbol: " << elem.left.name << endl;
+		cout << "left symbol: " << elem.left.id << " " << elem.left.name << endl;
         cout << "right symbol: ";
         for (auto flfm : elem.right)
             cout << flfm.name << " ";
@@ -93,10 +93,29 @@ void test_readgramma() {
     }
 }
 
+void test_first() {
+	using std::cout;
+	using std::endl;
+	BaseGrammar g;
+	g.readGramma("./gramma.txt");
+
+	g.calcuAllTerminalFirstSet();
+	g.calcuAllUnterminalFirstSet();
+	cout << "first set: ";
+	for (const auto &elem : g.symbol_arr) {
+		cout << elem.id << ": " << elem.name << endl;
+		cout << "first set size: " << elem.FIRST_SET.size() << endl;
+		for (const auto & flfm : elem.FIRST_SET)
+			cout << "(" << flfm << ", " << g.symbol_arr[flfm].name << ")" << endl;
+	}
+}
+
 int main() {
     //test_split();
     //test_set();
     //test_trim();
-    test_readgramma();
-    test_string();
+    //test_readgramma();
+    //test_string();
+
+	test_first();
 }

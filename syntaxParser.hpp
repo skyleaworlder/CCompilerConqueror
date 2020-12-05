@@ -2,12 +2,12 @@
 #define STNTAX_PARSER_HPP
 
 #include "utils.hpp"
-#include <set>
+#include <unordered_set>
 
 struct Symbol;
 struct Derivation;
 
-using Sym_Set = std::set<Symbol>;
+using Sym_Set = std::unordered_set<Symbol>;
 using Sym_Arr = std::vector<Symbol>;
 using Deri_Arr = std::vector<Derivation>;
 
@@ -32,8 +32,8 @@ struct Symbol {
     std::string name;
     Symbol::SYM_TYPE type;
 
-    std::set<int> FIRST_SET;
-    std::set<int> FOLLOW_SET;
+    std::unordered_set<int> FIRST_SET;
+    std::unordered_set<int> FOLLOW_SET;
 
     Symbol(
         const std::string name_inp,
@@ -103,8 +103,8 @@ public:
 
     Sym_Arr symbol_arr;
     // wqnm，set 到底是怎么判定相同节点的？wdnmd
-    std::set<int> terminal_set;
-    std::set<int> unterminal_set;
+    std::unordered_set<int> terminal_set;
+    std::unordered_set<int> unterminal_set;
 
     // 所以为什么这个用 arr，就是不知道为什么 set insert 之后 size 永远是 1
     // wqnmd
@@ -112,8 +112,16 @@ public:
 
 public:
     void readGramma(std::string file_path);
+	//将second集合中的元素加入到first集合，若with_epsilon=true，则连通epsilon一起合并，否则去掉epsilon
+	std::pair<bool, std::unordered_set<int>> mergeSet(const std::unordered_set<int> first, const std::unordered_set<int> second, bool with_epsilon);
+	void calcuSingleUnterminalFirstSet(int unterminal);
+	void calcuAllUnterminalFirstSet();
+	void calcuAllTerminalFirstSet();
+	void calcuSingleUnterminalFollowSet(int unternimal);
+	void calcuAllUnterminalFollowSet();
+	
 
-private:
+public:
 
     /**
      * @brief 根据 name 获取 id，其实也可以当成检验符号是否存在的函数
@@ -134,10 +142,11 @@ private:
     }
 
     inline Symbol getSymByName(std::string name) {
-        for (const auto& elem : this->symbol_arr)
+        for (auto& elem : this->symbol_arr)
             if (elem.name == name)
                 return elem;
-        return Symbol("#", Symbol::SYM_TYPE::END, -1);
+		Symbol ch("#", Symbol::SYM_TYPE::END, -1);
+        return ch;
     }
 };
 
