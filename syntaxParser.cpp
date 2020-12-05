@@ -38,7 +38,7 @@ void BaseGrammar::readGramma(std::string file_path) {
         split_res = split(line_read, " -> ");
         std::for_each(split_res.begin(), split_res.end(), trim);
         // 左右分开
-        std::string left_str = split_res[0];
+        std::string left_str = trim(split_res[0]);
         std::string right_str = split_res[1];
 
         // 接下来对右侧进行处理：A -> a B b | A C | D d
@@ -60,8 +60,11 @@ void BaseGrammar::readGramma(std::string file_path) {
 
                 // 新增未出现过的 非终结符
                 // 先看左边
-                Symbol left(left_str, Symbol::UNTERMINAL, this->symbol_arr.size());
-                if (-1 == getSymIdByName(left_str).first) {
+                auto get_res = getSymIdByName(left_str);
+                Symbol left = (-1 == get_res.first)
+                    ? (Symbol(left_str, Symbol::UNTERMINAL, this->symbol_arr.size()))
+                    : (Symbol(left_str, get_res.second, get_res.first));
+                if (-1 == get_res.first) {
                     this->symbol_arr.emplace_back(left);
                     // 因为在 symbol arr 中添加过了，所以可以找到，并且完成添加
                     this->unterminal_set.insert(getSymIdByName(left_str).first);
@@ -80,7 +83,7 @@ void BaseGrammar::readGramma(std::string file_path) {
                 }
 
                 // convert type std::vector to std::set
-                Derivation new_derive(left, right);
+                Derivation new_derive(left, right, this->derivation_set.size());
                 this->derivation_set.emplace_back(new_derive);
             }
         }

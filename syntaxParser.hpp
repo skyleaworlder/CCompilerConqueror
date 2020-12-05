@@ -40,6 +40,7 @@ struct Symbol {
         const Symbol::SYM_TYPE type_inp,
         const size_t id_inp
     ) : name(name_inp), type(type_inp), id(id_inp) {}
+    Symbol(): name(""), type(SYM_TYPE::END), id(-1) {}
 
     bool operator < (const Symbol& input) const {
         return id < input.id;
@@ -71,10 +72,10 @@ struct Derivation {
 
     Derivation(
         Symbol left_inp, Sym_Arr right_inp,
-        bool lr1_flag_inp=false,
+        int id_inp, bool lr1_flag_inp=false,
         int dot_position_inp=-1, int derive_idx_inp=-1
     ) : left(left_inp), right(right_inp),
-        lr1_flag(lr1_flag_inp),
+        id(id_inp), lr1_flag(lr1_flag_inp),
         dot_position(dot_position_inp), derive_idx(derive_idx_inp) {}
 
     bool operator < (const Derivation &input) const {

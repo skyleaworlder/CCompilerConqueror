@@ -34,6 +34,8 @@ void test_trim() {
 
 void test_set() {
     using std::set;
+    using std::cout;
+    using std::endl;
     struct haha {
         int a; int b;
         haha(int a, int b) : a(a), b(b) {};
@@ -46,10 +48,13 @@ void test_set() {
     a.insert(haha(1,2));
     a.insert(haha(3,4));
     a.insert(haha(4,3));
-    using std::cout;
-    using std::endl;
     for (auto elem : a)
         printf("%d, %d\n", elem.a, elem.b);
+
+    set<int> un;
+    un.insert(2);
+    for (auto elem : un)
+        cout << elem << " ";
 }
 
 void test_string() {
@@ -65,7 +70,7 @@ void test_readgramma() {
     using std::cout;
     using std::endl;
     BaseGrammar g;
-    g.readGramma("./gramma.txt");
+    g.readGramma("./testgramma.txt");
 
     cout << "symbol set: ";
     for (const auto& elem : g.symbol_arr)
@@ -85,7 +90,8 @@ void test_readgramma() {
     cout << "derivation vector: " << endl;
     cout << g.derivation_set.size();
     for (auto elem : g.derivation_set) {
-        cout << "left symbol: " << elem.left.name << endl;
+        cout << "derive number: " << elem.id << endl;
+        cout << "left symbol: " << elem.left.id << " " << elem.left.name << endl;
         cout << "right symbol: ";
         for (auto flfm : elem.right)
             cout << flfm.name << " ";
@@ -98,5 +104,5 @@ int main() {
     //test_set();
     //test_trim();
     test_readgramma();
-    test_string();
+    //test_string();
 }
