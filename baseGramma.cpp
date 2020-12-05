@@ -1,4 +1,4 @@
-#include "syntaxParser.hpp"
+#include "baseGramma.hpp"
 
 const std::string BaseGrammar::Origin = "S";
 const std::string BaseGrammar::OriginPro = "Program";

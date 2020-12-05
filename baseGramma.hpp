@@ -1,5 +1,5 @@
-#ifndef SYNTAX_PARSER_HPP
-#define STNTAX_PARSER_HPP
+#ifndef BASE_GRAMMA_HPP
+#define BASE_GRAMMA_HPP
 
 #include "utils.hpp"
 #include <set>
@@ -10,6 +10,11 @@ struct Derivation;
 using Sym_Set = std::set<Symbol>;
 using Sym_Arr = std::vector<Symbol>;
 using Deri_Arr = std::vector<Derivation>;
+
+using symbol_idx = int;
+using derivation_idx = int;
+// the same as derivation_idx
+using lr0_idx = int;
 
 /**
  * @brief 符号 结构体
@@ -28,7 +33,7 @@ struct Symbol {
         EPSILON
     };
 
-    size_t id;
+    symbol_idx id;
     std::string name;
     Symbol::SYM_TYPE type;
 
@@ -38,12 +43,25 @@ struct Symbol {
     Symbol(
         const std::string name_inp,
         const Symbol::SYM_TYPE type_inp,
-        const size_t id_inp
+        const symbol_idx id_inp
     ) : name(name_inp), type(type_inp), id(id_inp) {}
     Symbol(): name(""), type(SYM_TYPE::END), id(-1) {}
 
     bool operator < (const Symbol& input) const {
         return id < input.id;
+    }
+
+    /**
+     * @brief 仅仅判断了 id / name / type / FIRST / FOLLOW
+     */
+    bool operator == (const Symbol& input) const {
+        return (
+            this->id == input.id
+            && this->name == input.name
+            && this->type == input.type
+            && this->FIRST_SET == input.FIRST_SET
+            && this->FOLLOW_SET == input.FOLLOW_SET
+        );
     }
 };
 
@@ -54,7 +72,7 @@ struct Symbol {
  * @param right: 右边的符号集
  * @param lr1_flag: 看看是否是 LR(1)
  * @param dot_postion: 如果是 LR(1) 才会有这个东西，表示项
- * @param derive_idx: 如果是 LR(0)，就是自己的编号，如果是 LR(1)，就是对应的 LR(0) 推导
+ * @param derive_idx: 如果是 LR(0)，就是自己的编号，如果是 LR(1)，就是对应的 LR(0) 推导 (但是这个貌似没赋值，之后再捋捋)
  */
 struct Derivation {
 
@@ -66,20 +84,31 @@ struct Derivation {
     Sym_Arr right;
 
     bool lr1_flag;
-    int id;
+    derivation_idx id;
     int dot_position;
-    int derive_idx;
+    derivation_idx derive_idx;
 
     Derivation(
         Symbol left_inp, Sym_Arr right_inp,
-        int id_inp, bool lr1_flag_inp=false,
-        int dot_position_inp=-1, int derive_idx_inp=-1
+        derivation_idx id_inp, bool lr1_flag_inp=false,
+        int dot_position_inp=-1, derivation_idx derive_idx_inp=-1
     ) : left(left_inp), right(right_inp),
         id(id_inp), lr1_flag(lr1_flag_inp),
         dot_position(dot_position_inp), derive_idx(derive_idx_inp) {}
 
     bool operator < (const Derivation &input) const {
         return id < input.id;
+    }
+
+    bool operator == (const Derivation &second) const {
+        return (
+            this->id == second.id
+            && this->dot_position == second.dot_position
+            && this->derive_idx == second.derive_idx
+            && this->lr1_flag == second.lr1_flag
+            && this->left == second.left
+            && this->right == second.right
+        );
     }
 };
 
@@ -102,13 +131,21 @@ public:
     static const std::string TerminalLineBeg;
     static const std::string EndSym;
 
+    // BaseGramma -- 符号集
     Sym_Arr symbol_arr;
-    // wqnm，set 到底是怎么判定相同节点的？wdnmd
+    /**
+     * @brief BaseGramma -- 终结符集
+     *        wqnm，set 到底是怎么判定相同节点的？wdnmd
+     */
     std::set<int> terminal_set;
+    // BaseGramma -- 非终结符集
     std::set<int> unterminal_set;
 
-    // 所以为什么这个用 arr，就是不知道为什么 set insert 之后 size 永远是 1
-    // wqnmd
+    /**
+     * @brief BaseGramma -- 推导式集
+     *        所以为什么这个用 arr，就是不知道为什么 set insert 之后 size 永远是 1
+     *        wqnmd
+     */
     Deri_Arr derivation_set;
 
 public:

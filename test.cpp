@@ -1,5 +1,5 @@
 #include "utils.hpp"
-#include "syntaxParser.hpp"
+#include "baseGramma.hpp"
 #include <string>
 #include <vector>
 #include <set>
@@ -42,6 +42,9 @@ void test_set() {
         bool operator<(const haha& rhs) const {
             return a < rhs.a;
         }
+        bool operator==(const haha& rhs) const {
+            return (a==rhs.a) && (b==rhs.b);
+        }
     };
     set<haha> a;
     a.insert(haha(1,2));
@@ -55,6 +58,14 @@ void test_set() {
     un.insert(2);
     for (auto elem : un)
         cout << elem << " ";
+
+    set<haha> b;
+    b.insert(haha(1,2));
+    b.insert(haha(4,3));
+    b.insert(haha(3,4));
+    for (auto elem : b)
+        printf("%d, %d\n", elem.a, elem.b);
+    cout << "is equal:" << (a==b) << endl;
 }
 
 void test_string() {
@@ -101,8 +112,8 @@ void test_readgramma() {
 
 int main() {
     //test_split();
-    //test_set();
+    test_set();
     //test_trim();
-    test_readgramma();
+    //test_readgramma();
     //test_string();
 }
