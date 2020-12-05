@@ -59,7 +59,12 @@ public:
      * @tparam int: 表示 dot_position
      */
     inline std::pair<lr0_idx, int> getLR0DrvIdByDrv(const Derivation& input) {
-
+        for (const auto& LR0Drv : this->lr0_derivations) {
+            if (input == LR0Drv)
+                return { LR0Drv.id, LR0Drv.dot_position };
+        }
+        // not found
+        return { -1, -1 };
     }
 };
 
@@ -111,6 +116,18 @@ struct ClosePkg {
             this->id == input.id
             && this->LR1_derivation_arr == input.LR1_derivation_arr
         );
+    }
+
+    /**
+     * @brief ClosePkg -- 判断闭包中是否存在某个 LR(1) 项目
+     * @param input: 输入的 LR(1) 项目/推导式
+     */
+    bool isExist(const LR1Derivation& input) {
+        for (const auto& elem : this->LR1_derivation_arr) {
+            if (elem == input)
+                return true;
+        }
+        return false;
     }
 };
 

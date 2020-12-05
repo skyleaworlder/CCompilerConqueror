@@ -14,7 +14,7 @@ const std::string BaseGrammar::TerminalLineBeg = "!";
  * @param file_path: 文法文件的位置
  * @see http://www.cplusplus.com/reference/string/string/getline/
  */
-void BaseGrammar::readGramma(std::string file_path) {
+void BaseGrammar::readGramma(const std::string file_path) {
     std::ifstream in(file_path);
     std::string line_read;
 

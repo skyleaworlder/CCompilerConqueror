@@ -110,10 +110,27 @@ void test_readgramma() {
     }
 }
 
+void test_equal() {
+    using std::string;
+    using std::vector;
+    using std::cout;
+    using std::endl;
+    string a = "haha";
+    string b = "hoho";
+    Symbol haha(a, Symbol::SYM_TYPE::UNTERMINAL, 0);
+    Symbol hoho(b, Symbol::SYM_TYPE::TERMINAL, 1);
+    Symbol hihi(b, Symbol::SYM_TYPE::TERMINAL, 1);
+    Derivation a_d(haha, vector<Symbol>{hoho}, false);
+    Derivation b_d(haha, vector<Symbol>{hihi}, false);
+
+    std::cout << "derive is equal: " << (a_d == b_d) << std::endl;
+}
+
 int main() {
     //test_split();
-    test_set();
+    //test_set();
     //test_trim();
     //test_readgramma();
     //test_string();
+    test_equal();
 }

@@ -100,6 +100,11 @@ struct Derivation {
         return id < input.id;
     }
 
+    /**
+     * @brief Derivation -- 重载判断相等,
+     *      仅仅判断了 id / dot_position / derive_idx /
+     *                  lr1_flag / left / right
+     */
     bool operator == (const Derivation &second) const {
         return (
             this->id == second.id
@@ -149,7 +154,11 @@ public:
     Deri_Arr derivation_set;
 
 public:
-    void readGramma(std::string file_path);
+    /**
+     * @brief BaseGramma -- 文法读取
+     * @param file_path: 输入的文法路径
+     */
+    void readGramma(const std::string file_path);
 
 private:
 
@@ -158,7 +167,7 @@ private:
      * @param name
      * @return 如果存在就返回 id 和 type，如果没有就返回 -1
      */
-    inline std::pair<int, Symbol::SYM_TYPE> getSymIdByName(std::string name) {
+    inline std::pair<int, Symbol::SYM_TYPE> getSymIdByName(const std::string name) {
         Sym_Arr::iterator iter = std::find_if(
             this->symbol_arr.begin(),
             this->symbol_arr.end(),
@@ -171,7 +180,7 @@ private:
         return { -1, Symbol::SYM_TYPE::END };
     }
 
-    inline Symbol getSymByName(std::string name) {
+    inline Symbol getSymByName(const std::string name) {
         for (const auto& elem : this->symbol_arr)
             if (elem.name == name)
                 return elem;
