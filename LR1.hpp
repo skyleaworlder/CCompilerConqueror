@@ -9,64 +9,6 @@ struct ClosePkg;
 
 using close_pkg_idx = int;
 
-class LR1Gramma : BaseGrammar {
-public:
-    /**
-     * @brief LR1Gramma -- LR(0) 的项目集
-     * @tparam Derivation: LR(0) 推导式类型
-     */
-    std::vector<Derivation> lr0_derivations;
-    /**
-     * @brief LR1Gramma -- LR(1) 项目集族
-     * @tparam ClosePkg: 闭包
-     */
-    std::vector<ClosePkg> C;
-
-    /**
-     * @brief LR1Gramma -- goto 表象的暂存区
-     * @tparam close_pkg_idx: 闭包主键，唯一能够区分闭包的变量
-     * @tparam symbol_idx: 符号主键，每个符号都有不同的变量
-     */
-    std::map<std::pair<close_pkg_idx, symbol_idx>, close_pkg_idx> goto_table_tmp;
-
-    /**
-     * @brief LR1Gramma -- goto 表象的暂存区
-     * @tparam close_pkg_idx: 闭包主键，唯一能够区分闭包的变量
-     * @tparam symbol_idx: 符号主键，每个符号都有不同的变量
-     * @tparam ActionDetail: 用于描述 Action 表项的结构体
-     */
-    std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> action_table;
-    /**
-     * @brief LR1Gramma -- goto 表象的暂存区
-     * @tparam close_pkg_idx: 闭包主键，唯一能够区分闭包的变量
-     * @tparam symbol_idx: 符号主键，每个符号都有不同的变量
-     * @tparam ActionDetail: 用于描述 Action 表项的结构体
-     */
-    std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> goto_table;
-public:
-    LR1Gramma(/* args */);
-    ~LR1Gramma();
-
-    /**
-     * @brief LR1Gramma -- 计算 LR(0) 项目
-     */
-    void calcuLR0Derivations();
-
-    /**
-     * @brief LR1Gramma -- 获得 LR(0) 项目的 id 和 dot_position
-     * @tparam lr0_idx: 表明要获得的 LR(0) 项目 id
-     * @tparam int: 表示 dot_position
-     */
-    inline std::pair<lr0_idx, int> getLR0DrvIdByDrv(const Derivation& input) {
-        for (const auto& LR0Drv : this->lr0_derivations) {
-            if (input == LR0Drv)
-                return { LR0Drv.id, LR0Drv.dot_position };
-        }
-        // not found
-        return { -1, -1 };
-    }
-};
-
 /**
  * @brief 操作集合
  * @param S: 移入
@@ -142,12 +84,108 @@ struct ClosePkg {
     /**
      * @brief ClosePkg -- 判断闭包中是否存在某个 LR(1) 项目
      * @param input: 输入的 LR(1) 项目/推导式
+     * @return boolean value
      */
-    bool isExist(const LR1Derivation& input) {
+    inline bool isExistLR1Drv(const LR1Derivation& input) {
         for (const auto& elem : this->LR1_derivation_arr) {
             if (elem == input)
                 return true;
         }
         return false;
     }
+};
+
+class LR1Gramma : BaseGrammar {
+public:
+    /**
+     * @brief LR1Gramma -- LR(0) 的项目集
+     * @tparam Derivation: LR(0) 推导式类型
+     */
+    std::vector<Derivation> lr0_derivations;
+    /**
+     * @brief LR1Gramma -- LR(1) 项目集族
+     * @tparam ClosePkg: 闭包
+     */
+    std::vector<ClosePkg> C;
+
+    /**
+     * @brief LR1Gramma -- goto 表象的暂存区
+     * @tparam close_pkg_idx: 闭包主键，唯一能够区分闭包的变量
+     * @tparam symbol_idx: 符号主键，每个符号都有不同的变量
+     */
+    std::map<std::pair<close_pkg_idx, symbol_idx>, close_pkg_idx> goto_table_tmp;
+
+    /**
+     * @brief LR1Gramma -- goto 表象的暂存区
+     * @tparam close_pkg_idx: 闭包主键，唯一能够区分闭包的变量
+     * @tparam symbol_idx: 符号主键，每个符号都有不同的变量
+     * @tparam ActionDetail: 用于描述 Action 表项的结构体
+     */
+    std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> action_table;
+    /**
+     * @brief LR1Gramma -- goto 表象的暂存区
+     * @tparam close_pkg_idx: 闭包主键，唯一能够区分闭包的变量
+     * @tparam symbol_idx: 符号主键，每个符号都有不同的变量
+     * @tparam ActionDetail: 用于描述 Action 表项的结构体
+     */
+    std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> goto_table;
+
+public:
+    LR1Gramma(/* args */);
+    ~LR1Gramma();
+
+    /**
+     * @brief LR1Gramma -- 获得 LR(0) 项目的 id 和 dot_position
+     * @tparam lr0_idx: 表明要获得的 LR(0) 项目 id
+     * @tparam int: 表示 dot_position
+     * @param input: Derivation 类型 / LR(0)
+     * @return first: id; second: dot_position
+     */
+    inline std::pair<lr0_idx, int> getLR0DrvIdByDrv(const Derivation& input) {
+        for (const auto& LR0Drv : this->lr0_derivations) {
+            if (input == LR0Drv)
+                return { LR0Drv.id, LR0Drv.dot_position };
+        }
+        // not found
+        return { -1, -1 };
+    }
+
+    /**
+     * @brief LR1Gramma -- 获得 闭包 的 id，没有就返回 -1
+     * @param input: ClosePkg
+     * @return close_pkg_idx
+     */
+    inline close_pkg_idx isExistClosePkg(const ClosePkg& input) {
+        for (const auto& elem : this->C) {
+            if (elem == input)
+                return elem.id;
+        }
+        return -1;
+    }
+
+    /**
+     * @brief LR1Gramma -- 计算 LR(0) 项目
+     */
+    void calcuLR0Derivations();
+
+    /**
+     * @brief LR1Gramma -- 计算 ClosePkg 闭包
+     * @param I: ClosePkg 类型 / 一般的输入一开始就是 LR(1) 项目集 I
+     * @return ClosePkg 类型，输入参数 I 的闭包
+     * @warning 需要格外注意，这个函数返回的是 修改过后的 I
+     */
+    ClosePkg calcuClosePkg(ClosePkg& I);
+
+    /**
+     * @brief LR1Gramma -- 给定一个 闭包 和 输入的符号，给出转移后的状态闭包
+     * @param I: ClosePkg 类型
+     * @param X: Symbol 类型。读入的字符肯定是 终结符 / 非终结符
+     * @return j: ClosePkg 类型
+     */
+    ClosePkg GO(const ClosePkg& I, const Symbol& X);
+
+    /**
+     * @brief LR1Gramma -- 计算 LR(1) 项集族
+     */
+    void calcuLR1Derivations();
 };

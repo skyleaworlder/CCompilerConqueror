@@ -85,6 +85,13 @@ void BaseGrammar::readGramma(const std::string file_path) {
                 // convert type std::vector to std::set
                 Derivation new_derive(left, right, this->derivation_set.size());
                 this->derivation_set.emplace_back(new_derive);
+
+                // 初始化第一个推导式
+                // 这个作为扩展推导式，只能够 S -> Program
+                // 不能支持推出 S -> A | B | C
+                // 如果必须推出多个，则要在其上再加一层
+                if (new_derive.left.name == "S")
+                    this->init_derivation = new_derive.id;
             }
         }
     }

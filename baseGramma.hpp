@@ -63,6 +63,22 @@ struct Symbol {
             && this->FOLLOW_SET == input.FOLLOW_SET
         );
     }
+
+    static bool isTerminal(const Symbol& input) {
+        return input.type == SYM_TYPE::TERMINAL;
+    }
+
+    static bool isUnTerminal(const Symbol& input) {
+        return input.type == SYM_TYPE::UNTERMINAL;
+    }
+
+    static bool isEnd(const Symbol& input) {
+        return input.type == SYM_TYPE::END;
+    }
+
+    static bool isEpsilon(const Symbol& input) {
+        return input.type == SYM_TYPE::EPSILON;
+    }
 };
 
 /**
@@ -153,6 +169,9 @@ public:
      */
     Deri_Arr derivation_set;
 
+    // S -> S' 这个推导式的 id
+    derivation_idx init_derivation;
+
 public:
     /**
      * @brief BaseGramma -- 文法读取
@@ -166,7 +185,6 @@ public:
 	void calcuAllTerminalFirstSet();
 	void calcuSingleUnterminalFollowSet(int unternimal);
 	void calcuAllUnterminalFollowSet();
-	
 
 public:
 
