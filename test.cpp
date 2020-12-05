@@ -143,6 +143,21 @@ void test_first() {
 	}
 }
 
+void test_cpp_static_method() {
+    Symbol a("haha", Symbol::SYM_TYPE::TERMINAL, 0);
+    Symbol b("$", Symbol::SYM_TYPE::EPSILON, 1);
+    Symbol c("#", Symbol::SYM_TYPE::END, 2);
+    Symbol d("HAHA", Symbol::SYM_TYPE::UNTERMINAL, 3);
+
+    std::vector<Symbol> arr { a,b,c,d };
+    for (const auto& elem : arr) {
+        std::cout << elem.name << " is terminal?: "<< Symbol::isTerminal(elem) << std::endl;
+        std::cout << elem.name << " is unterminal?: "<< Symbol::isUnTerminal(elem) << std::endl;
+        std::cout << elem.name << " is epsilon?: "<< Symbol::isEpsilon(elem) << std::endl;
+        std::cout << elem.name << " is end?: "<< Symbol::isEnd(elem) << std::endl;
+    }
+}
+
 int main() {
     //test_split();
     //test_set();
@@ -151,5 +166,5 @@ int main() {
     //test_string();
     //test_equal();
 	//test_first();
-
+    test_cpp_static_method();
 }
