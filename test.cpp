@@ -229,6 +229,15 @@ void test_actiongoto() {
         cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
             << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
     }
+	cout << endl << endl;
+
+	for (const auto& elem : g.goto_table) {
+		const close_pkg_idx c_idx = elem.first.first;
+		const symbol_idx s_idx = elem.first.second;
+		const ActionDetail actiondetail = elem.second;
+		cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
+			<< actiondetail.action << ", " << actiondetail.toward << ")" << endl;
+	}
 }
 
 int main() {

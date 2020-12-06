@@ -16,6 +16,7 @@ void LR1Gramma::calcuLR0Derivations() {
             this->lr0_derivations.back().derive_idx = this->derivation_set[index].id;
         }
     }
+	std::cout << std::endl;
 }
 
 // TODO: 死循环: lr0_derivation_idx 为空
@@ -112,15 +113,16 @@ ClosePkg LR1Gramma::GO(const ClosePkg& I, const Symbol& X) {
         const auto lr0_drv = this->lr0_derivations[lr1_drv.lr0_derivation_idx];
         //std::cout << "lr0 drv: id, name: " << lr0_drv.id << lr0_drv.left.name << std::endl;
         //std::cout << "lr1 derive_id: " << lr1_drv.lr0_derivation_idx <<std::endl;
+
+		// 排除 [A -> alpha·]
+		if (lr0_drv.dot_position >= lr0_drv.right.size())
+			continue;
+        //std::cout << "except1" <<std::endl;
         // 排除 [A -> alpha ·Y beta, a] (点后非 A)
         // 我没实现 !=
         //std::cout << "X: (" << X.id << ", " << X.name << ")" << std::endl;
-        if (!(X == lr0_drv.right[lr0_drv.dot_position]))
-            continue;
-        //std::cout << "except1" <<std::endl;
-        // 排除 [A -> alpha·]
-        if (lr0_drv.dot_position >= lr0_drv.right.size())
-            continue;
+		if (!(X == lr0_drv.right[lr0_drv.dot_position]))
+			continue;
         //std::cout << "except2" <<std::endl;
 
         Derivation lr0_drv_dot_back = lr0_drv;
@@ -211,6 +213,7 @@ void LR1Gramma::calcuLR1Derivations() {
             this->goto_table_tmp[{ I.id, X.id }] = this->C.size()-1;
         }
     }
+	std::cout << std::endl;
 }
 
 void LR1Gramma::calcuActionTable() {
