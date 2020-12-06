@@ -46,6 +46,11 @@ ClosePkg LR1Gramma::calcuClosePkg(ClosePkg& I) {
         if (Symbol::isEpsilon(B)) {
             Derivation lr0_drv_mod_dot = lr0_drv;
             lr0_drv_mod_dot.dot_position += 1;
+            lr0_drv_mod_dot.id = getLR0DrvIdByInfo(
+                lr0_drv_mod_dot.derive_idx,
+                lr0_drv_mod_dot.dot_position,
+                lr0_drv_mod_dot.lr1_flag
+            );
             // 必定存在的前提是，LR(0) 项目生成正常，链接到 A -> $· 项目
             I.LR1_derivation_arr[index].lr0_derivation_idx = this->getLR0DrvIdByDrv(lr0_drv_mod_dot).first;
             continue;
@@ -132,6 +137,18 @@ ClosePkg LR1Gramma::GO(const ClosePkg& I, const Symbol& X) {
             getLR0DrvIdByDrv(lr0_drv_dot_back).first,
             lr1_drv.look_forward_symbol_idx
         });
+
+        using std::cout;
+        using std::endl;
+        cout << "ClosePkg: " << this->C.size() << endl;
+        for (const auto& I : this->C) {
+            cout << I.id << ":" << endl;
+            for (auto drv : I.LR1_derivation_arr) {
+                cout << "(derivation, " << drv.lr0_derivation_idx << ") "
+                    << "(lf_sym, " << drv.look_forward_symbol_idx << ")" << endl;
+            }
+            cout << endl << endl;
+        }
     }
     return calcuClosePkg(j);
 }
