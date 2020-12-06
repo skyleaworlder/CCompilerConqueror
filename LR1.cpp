@@ -105,16 +105,27 @@ ClosePkg LR1Gramma::GO(const ClosePkg& I, const Symbol& X) {
     for (const auto& lr1_drv : I.LR1_derivation_arr) {
         // 找到所有的 [A -> alpha ·X beta, a] \in I
         const auto lr0_drv = this->lr0_derivations[lr1_drv.lr0_derivation_idx];
+        std::cout << "lr0 drv: id, name: " << lr0_drv.id << lr0_drv.left.name << std::endl;
+        std::cout << "lr1 derive_id: " << lr1_drv.lr0_derivation_idx <<std::endl;
         // 排除 [A -> alpha ·Y beta, a] (点后非 A)
         // 我没实现 !=
+        std::cout << "X: (" << X.id << ", " << X.name << ")" << std::endl;
         if (!(X == lr0_drv.right[lr0_drv.dot_position]))
             continue;
+        std::cout << "except1" <<std::endl;
         // 排除 [A -> alpha·]
         if (lr0_drv.dot_position >= lr0_drv.right.size())
             continue;
+        std::cout << "except2" <<std::endl;
 
         Derivation lr0_drv_dot_back = lr0_drv;
         lr0_drv_dot_back.dot_position += 1;
+        lr0_drv_dot_back.id = getLR0DrvIdByInfo(
+            lr0_drv_dot_back.derive_idx,
+            lr0_drv_dot_back.dot_position,
+            lr0_drv_dot_back.lr1_flag
+        );
+        std::cout << "lr0 dot back id: " << lr0_drv_dot_back.id << std::endl;
         // TODO: 这里可能有问题，因为 C 的 size 没有变
         // 很可能存在一堆相同 id 的 C
         j.LR1_derivation_arr.push_back({

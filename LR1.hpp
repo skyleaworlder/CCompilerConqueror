@@ -133,6 +133,28 @@ public:
 public:
 
     /**
+     * @brief LR1Gramma -- 根据 dot_position / derive_idx / lr1_flag 等信息获取 id
+     * @param derive_idx_inp: 输入 LR(0)/LR(1) 项目的源推导式 index
+     * @param dot_position_inp: 输入项目的 点位置
+     * @param lr1_flag_inp: 输入项目是否是 lr1 项目的标志位
+     * @return derivation_idx 类型 表示 id
+     */
+    inline derivation_idx getLR0DrvIdByInfo(
+        const derivation_idx derive_idx_inp,
+        const int dot_position_inp,
+        const bool lr1_flag_inp
+    ) {
+        for (const auto& LR0drv : this->lr0_derivations) {
+            if (LR0drv.dot_position == dot_position_inp
+                && LR0drv.derive_idx == derive_idx_inp
+                && LR0drv.lr1_flag == lr1_flag_inp)
+                return LR0drv.id;
+        }
+        // not found
+        return -1;
+    }
+
+    /**
      * @brief LR1Gramma -- 获得 LR(0) 项目的 id 和 dot_position
      * @tparam lr0_idx: 表明要获得的 LR(0) 项目 id
      * @tparam int: 表示 dot_position

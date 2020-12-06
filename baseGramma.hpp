@@ -52,15 +52,19 @@ struct Symbol {
     }
 
     /**
-     * @brief 仅仅判断了 id / name / type / FIRST / FOLLOW
+     * @brief 仅仅判断了 id / name / type
      */
     bool operator == (const Symbol& input) const {
+        if (this->id == input.id) {
+            std::cout << (this->name == input.name) << (this->type == input.type)
+            << (this->FIRST_SET == input.FIRST_SET) << (this->FOLLOW_SET == input.FOLLOW_SET) << std::endl;
+        }
         return (
             this->id == input.id
             && this->name == input.name
             && this->type == input.type
-            && this->FIRST_SET == input.FIRST_SET
-            && this->FOLLOW_SET == input.FOLLOW_SET
+            //&& this->FIRST_SET == input.FIRST_SET
+            //&& this->FOLLOW_SET == input.FOLLOW_SET
         );
     }
 
