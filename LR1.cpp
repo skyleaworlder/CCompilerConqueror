@@ -1,11 +1,14 @@
 #include "LR1.hpp"
 
 void LR1Gramma::calcuLR0Derivations() {
+    // S -> Program
+    // => S -> ·Program ; S -> Program·
     for (size_t index = 0; index < this->derivation_set.size(); ++index) {
-        for (size_t dot_pos = 0; dot_pos < this->derivation_set[index].right.size(); ++dot_pos) {
+        for (size_t dot_pos = 0; dot_pos <= this->derivation_set[index].right.size(); ++dot_pos) {
             this->lr0_derivations.emplace_back(this->derivation_set[index]);
             // back point to the last position
             // while end point point to the next pos of back()
+            this->lr0_derivations.back().id = this->lr0_derivations.size()-1;
             this->lr0_derivations.back().dot_position = dot_pos;
             this->lr0_derivations.back().lr1_flag = true;
             // derive_idx equal -1 when construct Derivation
@@ -15,13 +18,17 @@ void LR1Gramma::calcuLR0Derivations() {
     }
 }
 
+// TODO: 死循环: lr0_derivation_idx 为空
 ClosePkg LR1Gramma::calcuClosePkg(ClosePkg& I) {
     // 遍历 I 中的每一个 LR(1) 项目
     for (size_t index = 0; index < I.LR1_derivation_arr.size(); ++index) {
         // 取出的 LR(1) 项目 [A -> a·Bb, a]
         const LR1Derivation lr1_drv = I.LR1_derivation_arr[index];
+        std::cout << "heheh" << std::endl;
+        std::cout << lr1_drv.lr0_derivation_idx << std::endl;
         // 取出的 LR(0) 项目 [A -> a.Bb]
         const Derivation lr0_drv = this->lr0_derivations[lr1_drv.lr0_derivation_idx];
+        std::cout << "hohoho" << std::endl;
 
         // 不存在 b, 只是 [A -> aB·] (dot_position = 2; size = 2)
         // 因为后面还要取 FIRST(ba)，所以必须小于
@@ -56,15 +63,18 @@ ClosePkg LR1Gramma::calcuClosePkg(ClosePkg& I) {
         beta_a.emplace_back(lr1_drv.look_forward_symbol_idx);
 
         std::set<int> beta_a_first_set = calcuSymbolStringFirstSet(beta_a);
+        for (auto elem : beta_a_first_set)
+            std::cout << "first set: " << elem << std::endl;
 
         // 对于每个 B -> ·gama 产生式，都取出来分析一下
         // 首先，需要判断左侧是否为 B
         // 其次，要考虑点是否在最左侧
         // 再次，右侧一般为 终结符 / 非终结符
         //      如果是 epsilon，添加的是 B -> $·
-        for (const auto& drv : this->derivation_set) {
+        for (const auto& drv : this->lr0_derivations) {
             // 如果左边不是 B，那就下一个
             // 我只写了 ==，没写 !=
+            // std::cout << drv.left.name << std::endl;
             if (!(drv.left == B))
                 continue;
             else {
@@ -126,33 +136,45 @@ void LR1Gramma::calcuLR1Derivations() {
             break;
         }
     */
-    Derivation S_to_Program = *(std::find_if(this->derivation_set.begin(), this->derivation_set.end(), [&](Derivation elem) {
+    Derivation S_to_Program = *(std::find_if(this->lr0_derivations.begin(), this->lr0_derivations.end(), [&](Derivation elem) {
         return (elem.left.name == "S");
     }));
     ClosePkg init_closepkg;
     // 初始化第一个闭包
     init_closepkg.id = 0;
+    /* debug
+    std::cout << "S -> Program: " << S_to_Program.id << " " << S_to_Program.left.name << " " << S_to_Program.right.size() << std::endl;
+    std::cout << "              " << S_to_Program.dot_position << " " << S_to_Program.lr1_flag << std::endl;
+    std::cout << "drv id: " << getLR0DrvIdByDrv(S_to_Program).first << " " << getSymIdByName(EndSym).first << std::endl;
+    */
     init_closepkg.LR1_derivation_arr.push_back({
         getLR0DrvIdByDrv(S_to_Program).first,
         getSymIdByName(EndSym).first
     });
 
+    //std::cout << "hahah";
     // C := {ClosePkg of [S -> ·Program, #]}
     C.push_back(calcuClosePkg(init_closepkg));
+    //std::cout << "hoho";
     for (const auto& I : C) {
+        std::cout << I.id << std::endl;
         for (const auto& X : this->symbol_arr) {
             if (Symbol::isEnd(X) && Symbol::isEpsilon(X))
                 continue;
             const ClosePkg dest_close_pkg = GO(I, X);
+            // GO 为空
+            std::cout << "sbisbisbis" << std::endl;
             if (dest_close_pkg.LR1_derivation_arr.empty())
                 continue;
 
+            std::cout << "sbsbsbsb" << std::endl;
             // 已经存在，则跳过
             if (isExistClosePkg(dest_close_pkg) != -1) {
                 this->goto_table_tmp[{ I.id, X.id }] = isExistClosePkg(dest_close_pkg);
                 continue;
             }
 
+            std::cout << "plusplus" << std::endl;
             // 不存在，那么就往 C 里面添加
             this->C.push_back(dest_close_pkg);
             this->goto_table_tmp[{ I.id, X.id }] = this->C.size()-1;
@@ -162,7 +184,7 @@ void LR1Gramma::calcuLR1Derivations() {
 
 void LR1Gramma::calcuActionTable() {
     for (const auto& I : this->C) {
-        for (const auto& LR0_drv : this->derivation_set) {
+        for (const auto& LR0_drv : this->lr0_derivations) {
             for (const auto& terminal : this->terminal_set) {
                 if (!this->C[I.id].isExistLR1Drv({ LR0_drv.id, terminal }))
                     continue;
@@ -199,7 +221,7 @@ void LR1Gramma::calcuActionTable() {
 
 void LR1Gramma::calcuGotoTable() {
     for (const auto& I : this->C) {
-        for (const auto& LR0_drv : this->derivation_set) {
+        for (const auto& LR0_drv : this->lr0_derivations) {
             for (const auto& unterminal : this->unterminal_set) {
                 const auto iter = this->goto_table_tmp.find({ I.id, unterminal });
                 if (this->goto_table_tmp.end() != iter)

@@ -1,9 +1,12 @@
 #include "utils.hpp"
 #include "baseGramma.hpp"
+#include "LR1.hpp"
 #include <string>
 #include <vector>
 #include <set>
 #include <iostream>
+
+using namespace std;
 
 void test_split() {
     std::string a = "A -> BC | cd | bc";
@@ -158,6 +161,34 @@ void test_cpp_static_method() {
     }
 }
 
+void test_calcuClosePkg() {
+    LR1Gramma g;
+    g.readGramma("./testgramma.txt");
+    g.calcuAllTerminalFirstSet();
+    g.calcuAllUnterminalFirstSet();
+    g.calcuLR0Derivations();
+
+    cout << "LR0 derivations: " << g.lr0_derivations.size() << std::endl;
+    for (const auto& lr0 : g.lr0_derivations) {
+        cout << lr0.id << ": (" << lr0.left.id << ", " << lr0.left.name << ")" << endl;
+        cout << "dot pos: " << lr0.dot_position << endl;
+        for (auto elem : lr0.right)
+            cout << "(" << elem.id << ", " << elem.name << ") ";
+        cout << endl << endl;
+    }
+
+    g.calcuLR1Derivations();
+    cout << "ClosePkg: " << endl;
+    for (const auto& I : g.C) {
+        cout << I.id << ":" << endl;
+        for (auto drv : I.LR1_derivation_arr) {
+            cout << "(derivation, " << drv.lr0_derivation_idx << ") "
+                << "(lf_sym, " << drv.look_forward_symbol_idx << ")" << endl;
+        }
+        cout << endl << endl;
+    }
+}
+
 int main() {
     //test_split();
     //test_set();
@@ -166,5 +197,6 @@ int main() {
     //test_string();
     //test_equal();
 	//test_first();
-    test_cpp_static_method();
+    //test_cpp_static_method();
+    test_calcuClosePkg();
 }

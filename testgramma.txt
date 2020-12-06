@@ -1,8 +1,7 @@
 
 
-!letter -> a | b | c | d
+!letter -> a | b
 
-A -> a A b
-B -> b | $
-C -> B D
-D -> $ | b A C
+S -> Program
+Program -> B B
+B -> a B | b

@@ -95,7 +95,7 @@ struct ClosePkg {
     }
 };
 
-class LR1Gramma : BaseGrammar {
+class LR1Gramma : public BaseGrammar {
 public:
     /**
      * @brief LR1Gramma -- LR(0) 的项目集
@@ -131,8 +131,6 @@ public:
     std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> goto_table;
 
 public:
-    LR1Gramma(/* args */);
-    ~LR1Gramma();
 
     /**
      * @brief LR1Gramma -- 获得 LR(0) 项目的 id 和 dot_position

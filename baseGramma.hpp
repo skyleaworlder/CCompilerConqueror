@@ -122,6 +122,9 @@ struct Derivation {
      *                  lr1_flag / left / right
      */
     bool operator == (const Derivation &second) const {
+        std::cout << (this->id == second.id) << (this->dot_position == second.dot_position)
+            << (this->derive_idx == second.derive_idx) << (this->lr1_flag == second.lr1_flag)
+            << (this->left == second.left) << (this->right == second.right) << std::endl;
         return (
             this->id == second.id
             && this->dot_position == second.dot_position
