@@ -189,6 +189,48 @@ void test_calcuClosePkg() {
     }
 }
 
+void test_forrange() {
+    vector<int> arr;
+    arr.push_back(1);
+    for (size_t index = 0; index < arr.size(); index++) {
+        arr.push_back(arr[index] + 1);
+        if (arr.size() == 5)
+            break;
+    }
+    for (auto index : arr)
+        cout << index << endl;
+}
+
+void test_actiongoto() {
+    LR1Gramma g;
+    g.readGramma("./testgramma.txt");
+    g.calcuAllTerminalFirstSet();
+    g.calcuAllUnterminalFirstSet();
+    g.calcuLR0Derivations();
+    g.calcuLR1Derivations();
+    g.calcuActionTable();
+    g.calcuGotoTable();
+
+    cout << "ClosePkg: " << endl;
+    for (const auto& I : g.C) {
+        cout << I.id << ":" << endl;
+        for (auto drv : I.LR1_derivation_arr) {
+            cout << "(derivation, " << drv.lr0_derivation_idx << ") "
+                << "(lf_sym, " << drv.look_forward_symbol_idx << ")" << endl;
+        }
+        cout << endl << endl;
+    }
+
+    cout << g.action_table.size() << endl;;
+    for (const auto& elem : g.action_table) {
+        const close_pkg_idx c_idx = elem.first.first;
+        const symbol_idx s_idx = elem.first.second;
+        const ActionDetail actiondetail = elem.second;
+        cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
+            << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
+    }
+}
+
 int main() {
     //test_split();
     //test_set();
@@ -198,5 +240,7 @@ int main() {
     //test_equal();
 	//test_first();
     //test_cpp_static_method();
-    test_calcuClosePkg();
+    //test_calcuClosePkg();
+    //test_forrange();
+    test_actiongoto();
 }

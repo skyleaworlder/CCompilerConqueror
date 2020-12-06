@@ -72,12 +72,12 @@ struct ClosePkg {
     std::vector<LR1Derivation> LR1_derivation_arr;
 
     /**
-     * @brief 重载判断相等，仅判断了 id / LR1_derivation_arr
+     * @brief 重载判断相等，仅判断了 LR1_derivation_arr,
+     *          因为 id 肯定是不同的，id 是 primary key
      */
     bool operator == (const ClosePkg& input) const {
         return (
-            this->id == input.id
-            && this->LR1_derivation_arr == input.LR1_derivation_arr
+            this->LR1_derivation_arr == input.LR1_derivation_arr
         );
     }
 

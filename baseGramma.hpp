@@ -55,10 +55,12 @@ struct Symbol {
      * @brief 仅仅判断了 id / name / type
      */
     bool operator == (const Symbol& input) const {
+        /* debug
         if (this->id == input.id) {
             std::cout << (this->name == input.name) << (this->type == input.type)
             << (this->FIRST_SET == input.FIRST_SET) << (this->FOLLOW_SET == input.FOLLOW_SET) << std::endl;
         }
+        */
         return (
             this->id == input.id
             && this->name == input.name
@@ -126,9 +128,11 @@ struct Derivation {
      *                  lr1_flag / left / right
      */
     bool operator == (const Derivation &second) const {
+        /* debug
         std::cout << (this->id == second.id) << (this->dot_position == second.dot_position)
             << (this->derive_idx == second.derive_idx) << (this->lr1_flag == second.lr1_flag)
             << (this->left == second.left) << (this->right == second.right) << std::endl;
+        */
         return (
             this->id == second.id
             && this->dot_position == second.dot_position

@@ -24,11 +24,11 @@ ClosePkg LR1Gramma::calcuClosePkg(ClosePkg& I) {
     for (size_t index = 0; index < I.LR1_derivation_arr.size(); ++index) {
         // 取出的 LR(1) 项目 [A -> a·Bb, a]
         const LR1Derivation lr1_drv = I.LR1_derivation_arr[index];
-        std::cout << "heheh" << std::endl;
-        std::cout << lr1_drv.lr0_derivation_idx << std::endl;
+        //std::cout << "heheh" << std::endl;
+        //std::cout << lr1_drv.lr0_derivation_idx << std::endl;
         // 取出的 LR(0) 项目 [A -> a.Bb]
         const Derivation lr0_drv = this->lr0_derivations[lr1_drv.lr0_derivation_idx];
-        std::cout << "hohoho" << std::endl;
+        //std::cout << "hohoho" << std::endl;
 
         // 不存在 b, 只是 [A -> aB·] (dot_position = 2; size = 2)
         // 因为后面还要取 FIRST(ba)，所以必须小于
@@ -68,8 +68,6 @@ ClosePkg LR1Gramma::calcuClosePkg(ClosePkg& I) {
         beta_a.emplace_back(lr1_drv.look_forward_symbol_idx);
 
         std::set<int> beta_a_first_set = calcuSymbolStringFirstSet(beta_a);
-        for (auto elem : beta_a_first_set)
-            std::cout << "first set: " << elem << std::endl;
 
         // 对于每个 B -> ·gama 产生式，都取出来分析一下
         // 首先，需要判断左侧是否为 B
@@ -107,21 +105,23 @@ ClosePkg LR1Gramma::GO(const ClosePkg& I, const Symbol& X) {
     if (Symbol::isEnd(X) || Symbol::isEpsilon(X))
         return j;
 
-    for (const auto& lr1_drv : I.LR1_derivation_arr) {
+    // 不能用 范围 for 循环
+    for (size_t lr1_drv_idx = 0; lr1_drv_idx < I.LR1_derivation_arr.size(); lr1_drv_idx++) {
         // 找到所有的 [A -> alpha ·X beta, a] \in I
+        const auto lr1_drv = I.LR1_derivation_arr[lr1_drv_idx];
         const auto lr0_drv = this->lr0_derivations[lr1_drv.lr0_derivation_idx];
-        std::cout << "lr0 drv: id, name: " << lr0_drv.id << lr0_drv.left.name << std::endl;
-        std::cout << "lr1 derive_id: " << lr1_drv.lr0_derivation_idx <<std::endl;
+        //std::cout << "lr0 drv: id, name: " << lr0_drv.id << lr0_drv.left.name << std::endl;
+        //std::cout << "lr1 derive_id: " << lr1_drv.lr0_derivation_idx <<std::endl;
         // 排除 [A -> alpha ·Y beta, a] (点后非 A)
         // 我没实现 !=
-        std::cout << "X: (" << X.id << ", " << X.name << ")" << std::endl;
+        //std::cout << "X: (" << X.id << ", " << X.name << ")" << std::endl;
         if (!(X == lr0_drv.right[lr0_drv.dot_position]))
             continue;
-        std::cout << "except1" <<std::endl;
+        //std::cout << "except1" <<std::endl;
         // 排除 [A -> alpha·]
         if (lr0_drv.dot_position >= lr0_drv.right.size())
             continue;
-        std::cout << "except2" <<std::endl;
+        //std::cout << "except2" <<std::endl;
 
         Derivation lr0_drv_dot_back = lr0_drv;
         lr0_drv_dot_back.dot_position += 1;
@@ -130,7 +130,7 @@ ClosePkg LR1Gramma::GO(const ClosePkg& I, const Symbol& X) {
             lr0_drv_dot_back.dot_position,
             lr0_drv_dot_back.lr1_flag
         );
-        std::cout << "lr0 dot back id: " << lr0_drv_dot_back.id << std::endl;
+        //std::cout << "lr0 dot back id: " << lr0_drv_dot_back.id << std::endl;
         // TODO: 这里可能有问题，因为 C 的 size 没有变
         // 很可能存在一堆相同 id 的 C
         j.LR1_derivation_arr.push_back({
@@ -138,6 +138,7 @@ ClosePkg LR1Gramma::GO(const ClosePkg& I, const Symbol& X) {
             lr1_drv.look_forward_symbol_idx
         });
 
+        /* debug
         using std::cout;
         using std::endl;
         cout << "ClosePkg: " << this->C.size() << endl;
@@ -149,6 +150,7 @@ ClosePkg LR1Gramma::GO(const ClosePkg& I, const Symbol& X) {
             }
             cout << endl << endl;
         }
+        */
     }
     return calcuClosePkg(j);
 }
@@ -184,25 +186,26 @@ void LR1Gramma::calcuLR1Derivations() {
     // C := {ClosePkg of [S -> ·Program, #]}
     C.push_back(calcuClosePkg(init_closepkg));
     //std::cout << "hoho";
-    for (const auto& I : C) {
-        std::cout << I.id << std::endl;
+    for (size_t I_idx = 0; I_idx < this->C.size(); I_idx++) {
+        const auto I = this->C[I_idx];
+        //std::cout << I.id << std::endl;
         for (const auto& X : this->symbol_arr) {
             if (Symbol::isEnd(X) && Symbol::isEpsilon(X))
                 continue;
             const ClosePkg dest_close_pkg = GO(I, X);
             // GO 为空
-            std::cout << "sbisbisbis" << std::endl;
+            //std::cout << "sbisbisbis" << std::endl;
             if (dest_close_pkg.LR1_derivation_arr.empty())
                 continue;
 
-            std::cout << "sbsbsbsb" << std::endl;
+            //std::cout << "sbsbsbsb" << std::endl;
             // 已经存在，则跳过
             if (isExistClosePkg(dest_close_pkg) != -1) {
                 this->goto_table_tmp[{ I.id, X.id }] = isExistClosePkg(dest_close_pkg);
                 continue;
             }
 
-            std::cout << "plusplus" << std::endl;
+            //std::cout << "plusplus" << std::endl;
             // 不存在，那么就往 C 里面添加
             this->C.push_back(dest_close_pkg);
             this->goto_table_tmp[{ I.id, X.id }] = this->C.size()-1;
