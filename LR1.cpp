@@ -1,6 +1,3 @@
-#ifndef LR1_HPP
-#define LR1_HPP
-
 #include "LR1.hpp"
 
 void LR1Gramma::calcuLR0Derivations() {
@@ -268,5 +265,3 @@ void LR1Gramma::calcuGotoTable() {
         }
     }
 }
-
-#endif

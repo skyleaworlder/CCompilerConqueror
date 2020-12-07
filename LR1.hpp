@@ -1,3 +1,6 @@
+#ifndef LR1_HPP
+#define LR1_HPP
+
 #include <vector>
 #include <string>
 #include <map>
@@ -219,3 +222,5 @@ public:
      */
     void calcuGotoTable();
 };
+
+#endif
