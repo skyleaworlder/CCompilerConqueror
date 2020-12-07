@@ -13,20 +13,6 @@ const std::set<std::string> Terminal = {
     "(", ")", "{", "}", ";", ",", "<ID>", "<INT>"
 };
 
-const std::set<std::string> KeyWord = {
-    "int", "float", "double", "void",
-    "if", "else", "while", "return",
-};
-
-const std::set<std::string> Operator = {
-    "+", "-", "*", "/", "=", "<", ">", "<=",
-    ">=", "==", "!=", "+=", "-=", "*=", "/=",
-};
-
-const std::set<std::string> Separator = { "(", ")", "{", "}", ";", "," };
-
-const std::set<std::string> Symbol = { "<INT>", "<ID>" };
-
 /**
  * @brief 词法分析器 token.
  *          比如 { 0, 10, "int", "int" }, { 30, 1, "<INT>", "45" }
