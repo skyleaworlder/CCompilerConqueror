@@ -1,3 +1,6 @@
+#ifndef LR1_HPP
+#define LR1_HPP
+
 #include "LR1.hpp"
 
 void LR1Gramma::calcuLR0Derivations() {
@@ -230,7 +233,8 @@ void LR1Gramma::calcuActionTable() {
                 const int drv_dot_position = LR0_drv.dot_position;
 
                 if (drv_dot_position >= LR0_drv.right.size()) {
-                    if (this->symbol_arr[drv_left_idx].name == OriginPro)
+                    // Origin instead of OriginPro, error in slides
+                    if (this->symbol_arr[drv_left_idx].name == Origin)
                         this->action_table[{ I.id, getSymIdByName(EndSym).first }] = { Action::ACC, -1 };
                     else
                         this->action_table[{ I.id, look_forward_sym_idx }] = { Action::R, drv_idx };
@@ -264,3 +268,5 @@ void LR1Gramma::calcuGotoTable() {
         }
     }
 }
+
+#endif
