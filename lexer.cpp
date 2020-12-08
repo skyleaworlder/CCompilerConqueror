@@ -15,8 +15,8 @@ void Lexer::parsing_automata(const char& ch) {
     static STATE state {STATE::INIT};
     static int lineNumber {0};
     static std::string token;
+
     auto init_handle = [](const char& ch) {
-        token.clear();
         if (isdigit(ch)) {
             token += ch;
             state = STATE::NUM;
@@ -27,9 +27,7 @@ void Lexer::parsing_automata(const char& ch) {
             token += ch;
             state = STATE::ID;
         } else if (isblank(ch)) {
-            if (ch == '\n') {
-                ++lineNumber;
-            }
+            // Do nothing
         } else {
             throw std::runtime_error(std::string("Character ") + ch +" is not expected.");
         }
@@ -39,15 +37,56 @@ void Lexer::parsing_automata(const char& ch) {
             token += ch;
         } else {
             _token_list.push_back({
-                get_terminal_id("<INT>"),
+                                      get_terminal_id("<INT>"),
+                                      lineNumber,
+                                      "<INT>",
+                                      token
+                                  });
+            state = STATE::ACCEPT;
+        }
+    };
+    auto id_handle = [this](const char& ch) {
+        if (isalnum(ch) || ch == '_') {
+            token += ch;
+        } else {
+            // First try find the token in the _terminals
+            // If found then it's a keyword, otherwise an identifier (variable).
+            if (is_valid_terminal(token)) {
+                // token is a keyword
+                _token_list.push_back({
+                                          get_terminal_id(token),
+                                          lineNumber,
+                                          token,
+                                          token
+                                      });
+            } else {
+                // token is a <ID>
+                _token_list.push_back({
+                                          get_terminal_id("<ID>"),
+                                          lineNumber,
+                                          "<ID>",
+                                          token
+                                      });
+            }
+            state = STATE::ACCEPT;
+        }
+    };
+    auto op_handle = [this](const char& ch) {
+        /**
+         * Operators are special, for it ends when extending the next character cannot
+         * make the token found in _terminals
+         */
+        if (ispunct(ch) && is_valid_terminal(token + ch)) {
+            token += ch;
+        } else {
+            _token_list.push_back({
+                get_terminal_id(token),
                 lineNumber,
-                "<INT>",
+                token,
                 token
             });
         }
     };
-    auto id_handle = [](const char& ch) {};
-    auto op_handle = [](const char& ch) {};
 
     switch (state) {
         case INIT:
@@ -67,7 +106,12 @@ void Lexer::parsing_automata(const char& ch) {
     }
 
     if (state == STATE::ACCEPT) {
+        token.clear();
+        init_handle(ch);
+    }
 
+    if (ch == '\n') {
+        ++lineNumber;
     }
 }
 
@@ -79,4 +123,8 @@ int Lexer::get_terminal_id(std::string tokenVal) {
     } else {
         return iter - _terminals.begin();
     }
+}
+
+bool Lexer::is_valid_terminal(const std::string& word) {
+    return std::find(_terminals.begin(), _terminals.end(), word) != _terminals.end();
 }

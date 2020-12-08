@@ -41,6 +41,7 @@ class Lexer {
     static const char FLUSH = -1;
     void parsing_automata(const char& ch = FLUSH);
     int get_terminal_id(std::string tokenVal);
+    bool is_valid_terminal(const std::string&);
 public:
     Lexer(std::vector<std::string>  terminals) : _terminals {std::move(terminals)} {};
     std::vector<Token> parse(const std::string& code);
