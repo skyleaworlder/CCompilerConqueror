@@ -1,0 +1,57 @@
+ClosePkg: 
+0:
+(derivation, 0) (lf_sym, 0)
+(derivation, 2) (lf_sym, 0)
+(derivation, 5) (lf_sym, 2)
+(derivation, 5) (lf_sym, 3)
+(derivation, 8) (lf_sym, 2)
+(derivation, 8) (lf_sym, 3)
+
+
+1:
+(derivation, 6) (lf_sym, 2)
+(derivation, 6) (lf_sym, 3)
+(derivation, 5) (lf_sym, 2)
+(derivation, 8) (lf_sym, 2)
+(derivation, 5) (lf_sym, 3)
+(derivation, 8) (lf_sym, 3)
+
+
+2:
+(derivation, 9) (lf_sym, 2)
+(derivation, 9) (lf_sym, 3)
+
+
+3:
+(derivation, 1) (lf_sym, 0)
+
+
+4:
+(derivation, 3) (lf_sym, 0)
+(derivation, 5) (lf_sym, 0)
+(derivation, 8) (lf_sym, 0)
+
+
+5:
+(derivation, 7) (lf_sym, 2)
+(derivation, 7) (lf_sym, 3)
+
+
+6:
+(derivation, 6) (lf_sym, 0)
+(derivation, 5) (lf_sym, 0)
+(derivation, 8) (lf_sym, 0)
+
+
+7:
+(derivation, 9) (lf_sym, 0)
+
+
+8:
+(derivation, 4) (lf_sym, 0)
+
+
+9:
+(derivation, 7) (lf_sym, 0)
+
+
