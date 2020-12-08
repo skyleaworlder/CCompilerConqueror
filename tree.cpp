@@ -8,6 +8,9 @@ using namespace std;
 tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> action_table, std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> goto_table)
 {
     bool acc = false;
+    std::ofstream out_analyze;
+    out_analyze.open("parsing_analyze.txt");
+    int count_step = 0;
     std::stack<TreeNode> symStack;
     std::stack<close_pkg_idx> stateStack;
     TreeNode* tmp, * now_node;
@@ -16,9 +19,11 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
     tmp->name = "#";
     symStack.push(*tmp);//初始栈底为#
     stateStack.push(0);//初始压入状态0
-
+    output_paring_analyze(count_step, out_analyze, symStack, stateStack);
+    out_analyze << "动作:" << "初始状态" << endl<<endl;
     //遍历词法分析的结果
     for (list<token>::iterator iter = token_list.begin(); iter != token_list.end(); ) {
+
         //iter指向词法分析的当前的单词
         symbol_idx now_id = iter->id;
         string now_name = iter->name;
@@ -29,6 +34,7 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
         //action表中没有对应的状态 错误
         if (it == action_table.end()) {
             tree_root.record = -1;
+            out_analyze << "action表中未找到对应动作，语法分析失败" << endl << endl;
             break;
         }
         //有对应的状态
@@ -44,6 +50,10 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
                 //将头指向初始的符号
                 tree_root.child.push_back(last);
                 acc = true;
+                count_step++;
+                output_paring_analyze(count_step, out_analyze, symStack, stateStack);
+                out_analyze << "动作：" << "成功" << endl << endl;
+                cout << "语法分析成功" << endl;
                 break;
             }
 
@@ -56,6 +66,10 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
                 symStack.push(*now_node);//压入符号的值
                 stateStack.push(now_act.toward);//压入当前的状态
                 iter++;//词法结果后移
+                count_step++;
+                output_paring_analyze(count_step, out_analyze, symStack, stateStack);
+                out_analyze << "动作：" << "移进" << endl << endl;
+
             }
 
             //规约
@@ -96,6 +110,7 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
                 //分析出错
                 if (it_go == goto_table.end()) {
                     tree_root.record = -1;
+                    out_analyze << "goto表中无响应状态转移，语法分析失败" << endl << endl;
                     break;
                 }
                 else {
@@ -107,20 +122,26 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
                     }
                     else {
                         tree_root.record = -1;
+                        out_analyze << "语法分析失败" << endl << endl;
                         break;
                     }
                 }
+                count_step++;
+                output_paring_analyze(count_step, out_analyze, symStack, stateStack);
+                out_analyze << "动作：" << "规约" << endl<<endl;
             }
 
             //语法分析错误
             else {
                 tree_root.record = -1;
+                out_analyze << "语法分析失败" << endl << endl;
                 break;
             }
         }
     }
     if (!acc) {
         tree_root.record = -1;
+        cout << "语法分析失败" << endl;
     }
 
 }
@@ -186,7 +207,7 @@ void tree::print_tree() {
                         out << this->Tree[i].child[j]<<":"<<this->Tree[this->Tree[i].child[j]].node_name;
                         bo = true;
                     }
-                    else
+                    else 
                         out <<" "<< this->Tree[i].child[j] << ":" << this->Tree[this->Tree[i].child[j]].node_name;
 
                 }
@@ -195,4 +216,35 @@ void tree::print_tree() {
 
         }
     }
+}
+
+void tree::output_parsing_analyze(int count_step,std::ofstream& out, std::stack<TreeNode> symStack,std::stack<close_pkg_idx> stateStack)
+{
+    out << "步骤：" << count_step << endl;
+    stack<int>temp_state = stateStack;
+    stack<int>other_state;
+    while (!temp_state.empty()) {
+        other_state.push(temp_state.top());
+        temp_state.pop();
+    }
+    out << "状态栈：";
+    while (!other_state.empty()) {
+        out << other_state.top() << " ";
+        other_state.pop();
+    }
+    out << endl ;
+
+    stack<TreeNode>temp_sym = symStack;
+    stack<TreeNode>other_sym;
+    while (!temp_sym.empty()) {
+        other_sym.push(temp_sym.top());
+        temp_sym.pop();
+    }
+    out << "符号栈：";
+    while (!other_sym.empty()) {
+        out << other_sym.top().name << " ";
+        other_sym.pop();
+    }
+    out << endl;
+
 }
