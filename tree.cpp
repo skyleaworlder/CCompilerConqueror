@@ -1,5 +1,6 @@
 #include "tree.hpp"
 #include <stack>
+#include<queue>
 #include <algorithm>
 using namespace std;
 
@@ -18,12 +19,6 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
 
     //遍历词法分析的结果
     for (list<token>::iterator iter = token_list.begin(); iter != token_list.end(); ) {
-
-        /* debug
-        std::cout << "symStack size: " << symStack.size() << std::endl;
-        std::cout << "state Stack size: " << stateStack.size() << std::endl;
-        */
-
         //iter指向词法分析的当前的单词
         symbol_idx now_id = iter->id;
         string now_name = iter->name;
@@ -48,7 +43,6 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
                 *last = symStack.top();
                 //将头指向初始的符号
                 tree_root.child.push_back(last);
-                //std::cout << tree_root.child.size() << std::endl;
                 acc = true;
                 break;
             }
@@ -71,7 +65,20 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
                 father->name = deriv[aim_driv].left.name;
                 father->id = deriv[aim_driv].left.id;
                 father->record = 0;//非终结符
-                int length = deriv[aim_driv].right.size();//得到右边有几个要规约的符号
+
+                int length;
+                //判断是不是$ 是的话入栈 不pop
+                if (deriv[aim_driv].right[0].name == "$") {//得到右边有几个要规约的符号
+                    length = 0;
+                    /*now_node = new(nothrow)TreeNode;//当前读入的单词生成一个树节点
+                    now_node->id = 0;
+                    now_node->name = "$";
+                    now_node->record = 1;//终结符
+                    symStack.push(*now_node);//压入符号的值*/
+                }
+                else
+                    length = deriv[aim_driv].right.size();
+
                 //出栈过程
                 for (int i = 0; i < length; i++) {
                     TreeNode* child = new(nothrow)TreeNode;
@@ -119,6 +126,43 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
     }
     if (!acc) {
         tree_root.record = -1;
+    }
+
+}
+
+//层次遍历存放树节点
+void tree::tree_LevelTraverse() {
+    std::queue<TreeNode> LT_queue;//用于层次遍历的存放节点的队列
+    tree_list* cur_node;//生成list的格式存入list中
+    TreeNode head;//从queue中取出的头
+    int child_length, tree_length;//每个节点对应的孩子的长度 已经存放入list的长度
+
+    //队列先放入头结点
+    LT_queue.push(*tree_root.child[0]);//先将根节点入队列
+    head = LT_queue.front();//队列中的头
+
+    //先将头放入Tree中
+    cur_node = new(nothrow)tree_list;
+    cur_node->node_name = head.name;
+    cur_node->index = 0;
+    Tree.push_back(*cur_node);
+
+    for (int i = 0; !LT_queue.empty();i++) {
+        tree_length = this->Tree.size();//已存入Tree中的节点个数
+        head = LT_queue.front();//获取队列中的头
+        //存孩子
+        child_length = head.child.size();
+        for (int j = 0; j < child_length; j++) {
+            cur_node = new(nothrow)tree_list;
+            cur_node->node_name = head.child[j]->name;
+            cur_node->index = tree_length + j;
+            /*if (head.record == 1)
+                cur_node->child.push_back(-1);*/
+            Tree[i].child.push_back(cur_node->index);//对树中的节点标记孩子
+            this->Tree.push_back(*cur_node);//将节点存入树中
+            LT_queue.push(*head.child[j]);//将孩子放入队列中
+        }
+        LT_queue.pop();
     }
 
 }
