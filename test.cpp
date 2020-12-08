@@ -1,7 +1,7 @@
 #include "utils.hpp"
-#include "tree.hpp"
-#include "LR1.hpp"
 #include "baseGramma.hpp"
+#include "LR1.hpp"
+#include "tree.hpp"
 #include "lexer.hpp"
 #include <string>
 #include <vector>
@@ -281,93 +281,9 @@ void test_tree() {
     g.calcuActionTable();
     g.calcuGotoTable();
 
-   /* cout << "ClosePkg: " << endl;
-    for (const auto& I : g.C) {
-        cout << I.id << ":" << endl;
-        for (auto drv : I.LR1_derivation_arr) {
-            cout << "(derivation, " << drv.lr0_derivation_idx << ") "
-                << "(lf_sym, " << drv.look_forward_symbol_idx << ")" << endl;
-        }
-        cout << endl << endl;
-    }
-
-    cout << g.action_table.size() << endl;;
-    for (const auto& elem : g.action_table) {
-        const close_pkg_idx c_idx = elem.first.first;
-        const symbol_idx s_idx = elem.first.second;
-        const ActionDetail actiondetail = elem.second;
-        cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
-            << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
-    }
-    cout << endl << endl;*/
-
-    for (const auto& elem : g.goto_table) {
-        const close_pkg_idx c_idx = elem.first.first;
-        const symbol_idx s_idx = elem.first.second;
-        const ActionDetail actiondetail = elem.second;
-        cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
-            << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
-    }
-
     tree a(arr, g.derivation_set, g.action_table, g.goto_table);
 
-    TreeNode root = *(a.tree_root.child[0]);
-    cout <<endl<< "(" << root.id << ", " << root.name << ")" << endl;
-
-    a.tree_LevelTraverse();
-
-    for (int i = 0; i < a.Tree.size(); i++) {
-        cout << a.Tree[i].index<<" "<<a.Tree[i].node_name<< "->";
-        if (a.Tree[i].child.size()) {
-            for (int j = 0; j < a.Tree[i].child.size(); j++)
-                cout << a.Tree[i].child[j] << a.Tree[a.Tree[i].child[j]].node_name << " ";
-        }
-        else
-            cout << "$";
-        cout << endl;
-    }
-    /*std::queue<TreeNode*> q;
-    std::queue<TreeNode*> tmp;
-    do {
-        for (auto elem : root.child)
-            q.push(elem);
-        TreeNode* top = q.front();
-        q.pop();
-        std::cout << "(" << top->id << ", " << top->name << ")" << std::endl;
-        for (auto cd : top->child)
-            tmp.push(cd);
-
-    } while (q.size() == 0 && tmp.size() == 0);*/
-}
-
-void output_gramma() {
-    LR1Gramma g;
-    g.readGramma("testgramma.txt");
-    g.calcuAllTerminalFirstSet();
-    g.calcuAllUnterminalFirstSet();
-    g.calcuLR0Derivations();
-    g.calcuLR1Derivations();
-    g.calcuActionTable();
-    g.calcuGotoTable();
-
-    cout << g.action_table.size() << endl;
-    for (const auto& elem : g.action_table) {
-        const close_pkg_idx c_idx = elem.first.first;
-        const symbol_idx s_idx = elem.first.second;
-        const ActionDetail actiondetail = elem.second;
-        cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
-            << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
-    }
-	cout << endl << endl;
-
-    cout << g.goto_table.size() << endl;
-	for (const auto& elem : g.goto_table) {
-		const close_pkg_idx c_idx = elem.first.first;
-		const symbol_idx s_idx = elem.first.second;
-		const ActionDetail actiondetail = elem.second;
-		cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
-			<< actiondetail.action << ", " << actiondetail.toward << ")" << endl;
-	}
+    a.print_tree();
 }
 
 int main() {
@@ -382,7 +298,5 @@ int main() {
     //test_calcuClosePkg();
     //test_forrange();
     //test_actiongoto();
-    //test_tree();
-    //output_gramma();
     test_tree();
 }
