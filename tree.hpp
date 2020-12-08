@@ -7,6 +7,7 @@
 #include "lexer.hpp"
 #include <map>
 #include "LR1.hpp"
+#include <stack>
 
 //树节点
 struct TreeNode {
@@ -28,9 +29,17 @@ public:
     std::vector<tree_list> Tree;
 
 public:
-    tree(std::list<token> token_list, std::vector<Derivation> deriv, std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> action_table, std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> goto_table);
+    tree(std::list<token> token_list,
+        std::vector<Derivation> deriv,
+        std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> action_table,
+        std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> goto_table
+    );
     void tree_LevelTraverse();
     void print_tree();
+    void output_parsing_analyze(int count_step, std::ofstream& out,
+        std::stack<TreeNode> symStack,
+        std::stack<close_pkg_idx> stateStack
+    );
 };
 
 
