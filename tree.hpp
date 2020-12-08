@@ -16,15 +16,19 @@ struct TreeNode {
     std::vector<TreeNode*> child;
 };
 
+struct tree_list {
+    std::string node_name;
+    int index;
+    std::vector<int> child;//存放孩子
+};
+
 class tree {
 public:
     TreeNode tree_root;
+    std::vector<tree_list> Tree;
 public:
-    tree(
-        std::list<token> token_list,
-        std::vector<Derivation> deriv,
-        std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> action_table,
-        std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> goto_table
-    );
+
+    tree(std::list<token> token_list, std::vector<Derivation> deriv, std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> action_table, std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> goto_table);
+    void tree_LevelTraverse();
 };
 #endif
