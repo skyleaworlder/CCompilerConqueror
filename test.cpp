@@ -83,39 +83,6 @@ void test_string() {
     cout << (a == b) << endl;
 }
 
-void test_readgramma() {
-    using std::cout;
-    using std::endl;
-    BaseGrammar g;
-    g.readGramma("./testgramma.txt");
-
-    cout << "symbol set: ";
-    for (const auto& elem : g.symbol_arr)
-        cout << elem.name << " ";
-    cout << endl;
-
-    cout << "terminal set: ";
-    for (const auto& elem : g.terminal_set)
-        cout << elem << " ";
-    cout << endl;
-
-    cout << "unterminal set: ";
-    for (const auto& elem : g.unterminal_set)
-        cout << "(" << elem << "); ";
-    cout << endl;
-
-    cout << "derivation vector: " << endl;
-    cout << g.derivation_set.size() << endl;
-    for (auto elem : g.derivation_set) {
-        cout << "derive number: " << elem.id << endl;
-        cout << "left symbol: " << elem.left.id << " " << elem.left.name << endl;
-        cout << "right symbol: ";
-        for (auto flfm : elem.right)
-            cout << flfm.name << " ";
-        cout << endl << endl;
-    }
-}
-
 void test_equal() {
     using std::string;
     using std::vector;
@@ -130,23 +97,6 @@ void test_equal() {
     Derivation b_d(haha, vector<Symbol>{hihi}, false);
 
     std::cout << "derive is equal: " << (a_d == b_d) << std::endl;
-}
-
-void test_first() {
-    using std::cout;
-    using std::endl;
-    BaseGrammar g;
-    g.readGramma("./gramma.txt");
-
-    g.calcuAllTerminalFirstSet();
-    g.calcuAllUnterminalFirstSet();
-    cout << "first set: ";
-    for (const auto& elem : g.symbol_arr) {
-        cout << elem.id << ": " << elem.name << endl;
-        cout << "first set size: " << elem.FIRST_SET.size() << endl;
-        for (const auto& flfm : elem.FIRST_SET)
-            cout << "(" << flfm << ", " << g.symbol_arr[flfm].name << ")" << endl;
-    }
 }
 
 void test_cpp_static_method() {
@@ -164,35 +114,6 @@ void test_cpp_static_method() {
     }
 }
 
-void test_calcuClosePkg() {
-    LR1Gramma g;
-    g.readGramma("./testgramma.txt");
-    g.calcuAllTerminalFirstSet();
-    g.calcuAllUnterminalFirstSet();
-    g.calcuLR0Derivations();
-
-    cout << "LR0 derivations: " << g.lr0_derivations.size() << std::endl;
-    for (const auto& lr0 : g.lr0_derivations) {
-        cout << lr0.id << ": (" << lr0.left.id << ", " << lr0.left.name << ")" << endl;
-        cout << "dot pos: " << lr0.dot_position << endl;
-        cout << "derive idx: " << lr0.derive_idx << endl;
-        for (auto elem : lr0.right)
-            cout << "(" << elem.id << ", " << elem.name << ") ";
-        cout << endl << endl;
-    }
-
-    g.calcuLR1Derivations();
-    cout << "ClosePkg: " << endl;
-    for (const auto& I : g.C) {
-        cout << I.id << ":" << endl;
-        for (auto drv : I.LR1_derivation_arr) {
-            cout << "(derivation, " << drv.lr0_derivation_idx << ") "
-                << "(lf_sym, " << drv.look_forward_symbol_idx << ")" << endl;
-        }
-        cout << endl << endl;
-    }
-}
-
 void test_forrange() {
     vector<int> arr;
     arr.push_back(1);
@@ -205,7 +126,110 @@ void test_forrange() {
         cout << index << endl;
 }
 
-void test_actiongoto() {
+void test_readgramma(
+    std::string gramma_path,
+    std::ostream& out=std::cout
+) {
+    using std::cout;
+    using std::endl;
+    BaseGrammar g;
+    g.readGramma(gramma_path);
+
+    out << "symbol set: ";
+    for (const auto& elem : g.symbol_arr)
+        out << elem.name << " ";
+    out << endl;
+
+    out << "terminal set: ";
+    for (const auto& elem : g.terminal_set)
+        out << elem << " ";
+    out << endl;
+
+    out << "unterminal set: ";
+    for (const auto& elem : g.unterminal_set)
+        out << "(" << elem << "); ";
+    out << endl;
+
+    out << "derivation vector: " << endl;
+    out << g.derivation_set.size() << endl;
+    for (auto elem : g.derivation_set) {
+        out << "derive number: " << elem.id << endl;
+        out << "left symbol: " << elem.left.id << " " << elem.left.name << endl;
+        out << "right symbol: ";
+        for (auto flfm : elem.right)
+            out << flfm.name << " ";
+        out << endl << endl;
+    }
+}
+
+void test_first(
+    std::string gramma_path,
+    std::ostream& out=std::cout
+) {
+    using std::cout;
+    using std::endl;
+    BaseGrammar g;
+    g.readGramma(gramma_path);
+
+    g.calcuAllTerminalFirstSet();
+    g.calcuAllUnterminalFirstSet();
+    out << "first set: " << std::endl;
+    for (const auto& elem : g.symbol_arr) {
+        out << elem.id << ": " << elem.name << endl;
+        out << "first set size: " << elem.FIRST_SET.size() << endl;
+        for (const auto& flfm : elem.FIRST_SET)
+            out << "(" << flfm << ", " << g.symbol_arr[flfm].name << ")" << endl;
+        out << std::endl;
+    }
+}
+
+void test_lr0(
+    std::string gramma_path,
+    std::ostream& out=std::cout
+) {
+    LR1Gramma g;
+    g.readGramma(gramma_path);
+    g.calcuAllTerminalFirstSet();
+    g.calcuAllUnterminalFirstSet();
+    g.calcuLR0Derivations();
+
+    out << "LR0 derivations: " << g.lr0_derivations.size() << std::endl;
+    for (const auto& lr0 : g.lr0_derivations) {
+        out << lr0.id << ": (" << lr0.left.id << ", " << lr0.left.name << ")" << endl;
+        out << "dot pos: " << lr0.dot_position << endl;
+        out << "derive idx: " << lr0.derive_idx << endl;
+        for (auto elem : lr0.right)
+            out << "(" << elem.id << ", " << elem.name << ") ";
+        out << endl << endl;
+    }
+}
+
+void test_calcuClosePkg(
+    std::string gramma_path,
+    std::ostream& out=std::cout
+) {
+    LR1Gramma g;
+    g.readGramma(gramma_path);
+    g.calcuAllTerminalFirstSet();
+    g.calcuAllUnterminalFirstSet();
+    g.calcuLR0Derivations();
+
+    g.calcuLR1Derivations();
+    out << "ClosePkg: " << endl;
+    for (const auto& I : g.C) {
+        out << I.id << ":" << endl;
+        for (auto drv : I.LR1_derivation_arr) {
+            out << "(derivation, " << drv.lr0_derivation_idx << ") "
+                << "(lf_sym, " << drv.look_forward_symbol_idx << ")" << endl;
+        }
+        out << endl << endl;
+    }
+}
+
+void test_action(
+    std::string gramma_path,
+    std::ostream& out=std::cout
+) {
     LR1Gramma g;
     g.readGramma("./testgramma.txt");
     g.calcuAllTerminalFirstSet();
@@ -215,38 +239,45 @@ void test_actiongoto() {
     g.calcuActionTable();
     g.calcuGotoTable();
 
-    cout << "ClosePkg: " << endl;
-    for (const auto& I : g.C) {
-        cout << I.id << ":" << endl;
-        for (auto drv : I.LR1_derivation_arr) {
-            cout << "(derivation, " << drv.lr0_derivation_idx << ") "
-                << "(lf_sym, " << drv.look_forward_symbol_idx << ")" << endl;
-        }
-        cout << endl << endl;
-    }
-
-    cout << g.action_table.size() << endl;;
+    out << g.action_table.size() << endl;;
     for (const auto& elem : g.action_table) {
         const close_pkg_idx c_idx = elem.first.first;
         const symbol_idx s_idx = elem.first.second;
         const ActionDetail actiondetail = elem.second;
-        cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
-            << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
-    }
-    cout << endl << endl;
-
-    for (const auto& elem : g.goto_table) {
-        const close_pkg_idx c_idx = elem.first.first;
-        const symbol_idx s_idx = elem.first.second;
-        const ActionDetail actiondetail = elem.second;
-        cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
+        out << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
             << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
     }
 }
 
-void test_tree() {
+void test_goto(
+    std::string gramma_path,
+    std::ostream& out=std::cout
+) {
+    LR1Gramma g;
+    g.readGramma(gramma_path);
+    g.calcuAllTerminalFirstSet();
+    g.calcuAllUnterminalFirstSet();
+    g.calcuLR0Derivations();
+    g.calcuLR1Derivations();
+    g.calcuActionTable();
+    g.calcuGotoTable();
+
+    out << g.goto_table.size() << endl;;
+    for (const auto& elem : g.goto_table) {
+        const close_pkg_idx c_idx = elem.first.first;
+        const symbol_idx s_idx = elem.first.second;
+        const ActionDetail actiondetail = elem.second;
+        out << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
+            << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
+    }
+}
+
+void test_tree(
+    std::string gramma_path,
+    std::ostream& out=std::cout
+) {
     using std::vector;
-   /* 
+   /*
     list<token> arr = {
         { 2, 1, "a", "a" },
         { 2, 1, "a", "a" },
@@ -255,7 +286,7 @@ void test_tree() {
         { 3, 1, "b", "b" },
         { 0, 1, "#", "#" }
     };*/
-    
+
     list<token> arr = {
         { 2, 1, "int", "int" },
         { 31, 1, "<ID>", "main" },
@@ -270,7 +301,7 @@ void test_tree() {
         { 28, 3, "}", "}" },
         { 0, 3, "#", "#"}
     };
-    
+
 
     LR1Gramma g;
     g.readGramma("gramma.txt");
@@ -281,108 +312,55 @@ void test_tree() {
     g.calcuActionTable();
     g.calcuGotoTable();
 
-   /* cout << "ClosePkg: " << endl;
-    for (const auto& I : g.C) {
-        cout << I.id << ":" << endl;
-        for (auto drv : I.LR1_derivation_arr) {
-            cout << "(derivation, " << drv.lr0_derivation_idx << ") "
-                << "(lf_sym, " << drv.look_forward_symbol_idx << ")" << endl;
-        }
-        cout << endl << endl;
-    }
-
-    cout << g.action_table.size() << endl;;
-    for (const auto& elem : g.action_table) {
-        const close_pkg_idx c_idx = elem.first.first;
-        const symbol_idx s_idx = elem.first.second;
-        const ActionDetail actiondetail = elem.second;
-        cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
-            << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
-    }
-    cout << endl << endl;*/
-
     for (const auto& elem : g.goto_table) {
         const close_pkg_idx c_idx = elem.first.first;
         const symbol_idx s_idx = elem.first.second;
         const ActionDetail actiondetail = elem.second;
-        cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
+        out << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
             << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
     }
 
     tree a(arr, g.derivation_set, g.action_table, g.goto_table);
 
     TreeNode root = *(a.tree_root.child[0]);
-    cout <<endl<< "(" << root.id << ", " << root.name << ")" << endl;
+    out <<endl<< "(" << root.id << ", " << root.name << ")" << endl;
 
     a.tree_LevelTraverse();
 
     for (int i = 0; i < a.Tree.size(); i++) {
-        cout << a.Tree[i].index<<" "<<a.Tree[i].node_name<< "->";
+        out << a.Tree[i].index<<" "<<a.Tree[i].node_name<< "->";
         if (a.Tree[i].child.size()) {
             for (int j = 0; j < a.Tree[i].child.size(); j++)
-                cout << a.Tree[i].child[j] << a.Tree[a.Tree[i].child[j]].node_name << " ";
+                out << a.Tree[i].child[j] << a.Tree[a.Tree[i].child[j]].node_name << " ";
         }
         else
-            cout << "$";
-        cout << endl;
+            out << "$";
+        out << endl;
     }
-    /*std::queue<TreeNode*> q;
-    std::queue<TreeNode*> tmp;
-    do {
-        for (auto elem : root.child)
-            q.push(elem);
-        TreeNode* top = q.front();
-        q.pop();
-        std::cout << "(" << top->id << ", " << top->name << ")" << std::endl;
-        for (auto cd : top->child)
-            tmp.push(cd);
-
-    } while (q.size() == 0 && tmp.size() == 0);*/
-}
-
-void output_gramma() {
-    LR1Gramma g;
-    g.readGramma("testgramma.txt");
-    g.calcuAllTerminalFirstSet();
-    g.calcuAllUnterminalFirstSet();
-    g.calcuLR0Derivations();
-    g.calcuLR1Derivations();
-    g.calcuActionTable();
-    g.calcuGotoTable();
-
-    cout << g.action_table.size() << endl;
-    for (const auto& elem : g.action_table) {
-        const close_pkg_idx c_idx = elem.first.first;
-        const symbol_idx s_idx = elem.first.second;
-        const ActionDetail actiondetail = elem.second;
-        cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
-            << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
-    }
-	cout << endl << endl;
-
-    cout << g.goto_table.size() << endl;
-	for (const auto& elem : g.goto_table) {
-		const close_pkg_idx c_idx = elem.first.first;
-		const symbol_idx s_idx = elem.first.second;
-		const ActionDetail actiondetail = elem.second;
-		cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
-			<< actiondetail.action << ", " << actiondetail.toward << ")" << endl;
-	}
 }
 
 int main() {
+    // TODO: 有待优化的测试函数
     //test_split();
     //test_set();
     //test_trim();
-    //test_readgramma();
     //test_string();
     //test_equal();
-    //test_first();
     //test_cpp_static_method();
-    //test_calcuClosePkg();
     //test_forrange();
-    //test_actiongoto();
-    //test_tree();
-    //output_gramma();
-    test_tree();
+
+    std::string gramma_path = "testgramma.txt";
+    std::ofstream out_gramma("./data/gramma.txt", std::ios::out);
+    std::ofstream out_firstSet("./data/first_set.txt", std::ios::out);
+    std::ofstream out_closePkg("./data/close_pkg.txt", std::ios::out);
+    std::ofstream out_action("./data/action_table.txt", std::ios::out);
+    std::ofstream out_goto("./data/goto_table.txt", std::ios::out);
+    std::ofstream out_tree("./data/tree.txt", std::ios::out);
+
+    test_readgramma(gramma_path, out_gramma);
+    test_first(gramma_path, out_firstSet);
+    test_calcuClosePkg(gramma_path, out_closePkg);
+    test_action(gramma_path, out_action);
+    test_goto(gramma_path, out_goto);
+    test_tree(gramma_path, out_tree);
 }
