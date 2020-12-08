@@ -165,7 +165,7 @@ void tree::tree_LevelTraverse() {
 void tree::print_tree() {
     bool bo = false;
     std::ofstream out;
-    out.open("tree.txt");
+    out.open("./data/tree.txt");
 
     if (!out)
         cout << "Fail open file!" << endl;
