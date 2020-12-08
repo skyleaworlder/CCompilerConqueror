@@ -351,6 +351,36 @@ void test_tree() {
     } while (!(q.size() == 0 && tmp.size() == 0));
 }
 
+void output_gramma() {
+    LR1Gramma g;
+    g.readGramma("testgramma.txt");
+    g.calcuAllTerminalFirstSet();
+    g.calcuAllUnterminalFirstSet();
+    g.calcuLR0Derivations();
+    g.calcuLR1Derivations();
+    g.calcuActionTable();
+    g.calcuGotoTable();
+
+    cout << g.action_table.size() << endl;
+    for (const auto& elem : g.action_table) {
+        const close_pkg_idx c_idx = elem.first.first;
+        const symbol_idx s_idx = elem.first.second;
+        const ActionDetail actiondetail = elem.second;
+        cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
+            << actiondetail.action << ", " << actiondetail.toward << ")" << endl;
+    }
+	cout << endl << endl;
+
+    cout << g.goto_table.size() << endl;
+	for (const auto& elem : g.goto_table) {
+		const close_pkg_idx c_idx = elem.first.first;
+		const symbol_idx s_idx = elem.first.second;
+		const ActionDetail actiondetail = elem.second;
+		cout << "(" << c_idx << ", " << g.symbol_arr[s_idx].name << ") => ("
+			<< actiondetail.action << ", " << actiondetail.toward << ")" << endl;
+	}
+}
+
 int main() {
     //test_split();
     //test_set();
@@ -363,5 +393,6 @@ int main() {
     //test_calcuClosePkg();
     //test_forrange();
     //test_actiongoto();
-    test_tree();
+    //test_tree();
+    output_gramma();
 }
