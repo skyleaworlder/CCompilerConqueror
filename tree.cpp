@@ -70,11 +70,6 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
                 //判断是不是$ 是的话入栈 不pop
                 if (deriv[aim_driv].right[0].name == "$") {//得到右边有几个要规约的符号
                     length = 0;
-                    /*now_node = new(nothrow)TreeNode;//当前读入的单词生成一个树节点
-                    now_node->id = 0;
-                    now_node->name = "$";
-                    now_node->record = 1;//终结符
-                    symStack.push(*now_node);//压入符号的值*/
                 }
                 else
                     length = deriv[aim_driv].right.size();
@@ -165,4 +160,39 @@ void tree::tree_LevelTraverse() {
         LT_queue.pop();
     }
 
+}
+
+void tree::print_tree() {
+    bool bo = false;
+    std::ofstream out;
+    out.open("tree.txt");
+
+    if (!out)
+        cout << "Fail open file!" << endl;
+    if (this->tree_root.record == -1) {
+        out << "error" << endl;
+    }
+    else {
+
+        this->tree_LevelTraverse();
+        out << Tree[0].node_name<<endl;
+
+        for (int i = 0; i < this->Tree.size(); i++) {
+            bo = false;
+            if (this->Tree[i].child.size()) {
+                out << this->Tree[i].index << "->";
+                for (int j = 0; j < this->Tree[i].child.size(); j++) {
+                    if (!bo) {
+                        out << this->Tree[i].child[j]<<":"<<this->Tree[this->Tree[i].child[j]].node_name;
+                        bo = true;
+                    }
+                    else
+                        out <<" "<< this->Tree[i].child[j] << ":" << this->Tree[this->Tree[i].child[j]].node_name;
+
+                }
+                out << endl;
+            }
+
+        }
+    }
 }

@@ -1,7 +1,7 @@
 #include "utils.hpp"
-#include "tree.hpp"
-#include "LR1.hpp"
 #include "baseGramma.hpp"
+#include "LR1.hpp"
+#include "tree.hpp"
 #include "lexer.hpp"
 #include <string>
 #include <vector>
@@ -312,6 +312,7 @@ void test_tree(
     g.calcuActionTable();
     g.calcuGotoTable();
 
+<<<<<<< HEAD
     for (const auto& elem : g.goto_table) {
         const close_pkg_idx c_idx = elem.first.first;
         const symbol_idx s_idx = elem.first.second;
@@ -337,6 +338,11 @@ void test_tree(
             out << "$";
         out << endl;
     }
+=======
+    tree a(arr, g.derivation_set, g.action_table, g.goto_table);
+
+    a.print_tree();
+>>>>>>> tree_print
 }
 
 int main() {
@@ -348,6 +354,7 @@ int main() {
     //test_equal();
     //test_cpp_static_method();
     //test_forrange();
+<<<<<<< HEAD
 
     std::string gramma_path = "testgramma.txt";
     std::ofstream out_gramma("./data/gramma.txt", std::ios::out);
@@ -363,4 +370,8 @@ int main() {
     test_action(gramma_path, out_action);
     test_goto(gramma_path, out_goto);
     test_tree(gramma_path, out_tree);
+=======
+    //test_actiongoto();
+    test_tree();
+>>>>>>> tree_print
 }
