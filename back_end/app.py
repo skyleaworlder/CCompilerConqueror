@@ -5,11 +5,13 @@ from flask import Response, request
 
 app = Flask(__name__)
 
+# for debug
 @app.route("/", methods=["GET"])
 def test():
 
     # execute .exe file
     cmd = os.getcwd()+"/src/test.exe"
+    cmd = "test2.exe"
     p = subprocess.Popen(
         cmd, shell=True,
         stdout=subprocess.PIPE
@@ -21,7 +23,8 @@ def test():
     line_lst = str_stream.split('\r\n')
     line_lst = [line.strip(" ") for line in line_lst if len(line) > 0]
 
-    return jsonify({ "res": line_lst })
+    return jsonify({ "tree_str": line_lst })
+
 
 @app.route("/", methods=["POST"])
 def process():
@@ -33,7 +36,9 @@ def process():
     f.write(code)
 
     # execute .exe file
-    cmd = os.getcwd()+"/src/test.exe"
+    # TODO: wait path
+    #cmd = os.getcwd()+"/src/test.exe"
+    cmd = "../test2.exe"
     p = subprocess.Popen(
         cmd, shell=True,
         stdout=subprocess.PIPE
@@ -45,7 +50,7 @@ def process():
     line_lst = str_stream.split('\r\n')
     line_lst = [line.strip(" ") for line in line_lst if len(line) > 0]
 
-    return jsonify({ "res": line_lst })
+    return jsonify({ "tree_str": line_lst })
 
 
 if __name__ == "__main__":
