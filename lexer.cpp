@@ -6,6 +6,7 @@ std::vector<Token> Lexer::parse(const std::string& code) {
     for (auto iter = code.begin(); iter != code.end(); ++iter) {
         parsing_automata(*iter);
     }
+    parsing_automata(FLUSH);
 }
 
 void Lexer::parsing_automata(const char& ch) {
