@@ -38,3 +38,30 @@ inline std::string rtrim(std::string input) {
 std::string trim(std::string input) {
     return rtrim(ltrim(input));
 }
+
+std::string read_file(std::string file_path) {
+    std::ifstream in;
+    in.open(file_path);
+    std::string to_ret;
+
+    if (!in.is_open()) {
+        return "error";
+    }
+    else {
+        // 移动到最后
+        in.seekg(0, std::ios::end);
+        auto len = in.tellg();
+        in.seekg(0, std::ios::beg);
+
+        char *fileBuffer = nullptr;
+        fileBuffer = new char[static_cast<size_t>(len)+1];
+        memset(fileBuffer, 0, static_cast<size_t>(len)+1);
+        in.read(fileBuffer, len);
+        to_ret = fileBuffer;
+
+        delete[] fileBuffer;
+    }
+
+    in.close();
+    return to_ret;
+}
