@@ -19,7 +19,7 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
     tmp->name = "#";
     symStack.push(*tmp);//初始栈底为#
     stateStack.push(0);//初始压入状态0
-    output_paring_analyze(count_step, out_analyze, symStack, stateStack);
+    output_parsing_analyze(count_step, out_analyze, symStack, stateStack);
     out_analyze << "动作:" << "初始状态" << endl<<endl;
     //遍历词法分析的结果
     for (list<token>::iterator iter = token_list.begin(); iter != token_list.end(); ) {
@@ -51,7 +51,7 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
                 tree_root.child.push_back(last);
                 acc = true;
                 count_step++;
-                output_paring_analyze(count_step, out_analyze, symStack, stateStack);
+                output_parsing_analyze(count_step, out_analyze, symStack, stateStack);
                 out_analyze << "动作：" << "成功" << endl << endl;
                 cout << "语法分析成功" << endl;
                 break;
@@ -67,7 +67,7 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
                 stateStack.push(now_act.toward);//压入当前的状态
                 iter++;//词法结果后移
                 count_step++;
-                output_paring_analyze(count_step, out_analyze, symStack, stateStack);
+                output_parsing_analyze(count_step, out_analyze, symStack, stateStack);
                 out_analyze << "动作：" << "移进" << endl << endl;
 
             }
@@ -127,7 +127,7 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
                     }
                 }
                 count_step++;
-                output_paring_analyze(count_step, out_analyze, symStack, stateStack);
+                output_parsing_analyze(count_step, out_analyze, symStack, stateStack);
                 out_analyze << "动作：" << "规约" << endl<<endl;
             }
 

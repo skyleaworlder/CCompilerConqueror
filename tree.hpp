@@ -36,7 +36,8 @@ public:
     );
     void tree_LevelTraverse();
     void print_tree();
-    void output_parsing_analyze(int count_step, std::ofstream& out,
+    void output_parsing_analyze(
+        int count_step, std::ofstream& out,
         std::stack<TreeNode> symStack,
         std::stack<close_pkg_idx> stateStack
     );
