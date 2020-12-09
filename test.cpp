@@ -342,22 +342,19 @@ int main() {
     //test_cpp_static_method();
     //test_forrange();
 
-    /*
-    std::string gramma_path = "testgramma.txt";
-    std::ofstream out_gramma("./data/gramma.txt", std::ios::out);
-    std::ofstream out_firstSet("./data/first_set.txt", std::ios::out);
-    std::ofstream out_closePkg("./data/close_pkg.txt", std::ios::out);
-    std::ofstream out_action("./data/action_table.txt", std::ios::out);
-    std::ofstream out_goto("./data/goto_table.txt", std::ios::out);
-    //std::ofstream out_tree("./data/tree.txt", std::ios::out);
+    std::string gramma_path = "gramma.txt";
+    //std::ofstream out_gramma("./data/gramma.txt", std::ios::out);
+    //std::ofstream out_firstSet("./data/first_set.txt", std::ios::out);
+    //std::ofstream out_closePkg("./data/close_pkg.txt", std::ios::out);
+    //std::ofstream out_action("./data/action_table.txt", std::ios::out);
+    //std::ofstream out_goto("./data/goto_table.txt", std::ios::out);
+    std::ofstream out_tree("./data/tree.txt", std::ios::out);
 
-    test_readgramma(gramma_path, out_gramma);
-    test_first(gramma_path, out_firstSet);
-    test_calcuClosePkg(gramma_path, out_closePkg);
-    test_action(gramma_path, out_action);
-    test_goto(gramma_path, out_goto);
+    test_lexer();
+    //test_readgramma(gramma_path, out_gramma);
+    //test_first(gramma_path, out_firstSet);
+    //test_calcuClosePkg(gramma_path, out_closePkg);
+    //test_action(gramma_path, out_action);
+    //test_goto(gramma_path, out_goto);
     test_tree(gramma_path); // bad test function! Zzz-Syyy what are you doing here!
-    */
-
-   test_lexer();
 }
