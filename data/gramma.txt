@@ -1,0 +1,21 @@
+symbol set: # $ a b S Program B 
+terminal set: 0 2 3 
+unterminal set: (4); (5); (6); 
+derivation vector: 
+4
+derive number: 0
+left symbol: 4 S
+right symbol: Program 
+
+derive number: 1
+left symbol: 5 Program
+right symbol: B B 
+
+derive number: 2
+left symbol: 6 B
+right symbol: a B 
+
+derive number: 3
+left symbol: 6 B
+right symbol: b 
+
