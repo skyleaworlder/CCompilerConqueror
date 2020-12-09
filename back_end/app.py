@@ -11,8 +11,8 @@ app = Flask(__name__)
 def test():
 
     # execute .exe file
-    cmd = os.getcwd()+"/src/test.exe"
-    cmd = "test2.exe"
+    cmd = os.getcwd()+"/src/CCC.exe"
+    cmd = "CCC.exe"
     p = subprocess.Popen(
         cmd, shell=True,
         stdout=subprocess.PIPE
@@ -43,8 +43,8 @@ def process():
 
         # execute .exe file
         # TODO: wait path
-        #cmd = os.getcwd()+"/src/test.exe"
-        cmd = "../test2.exe"
+        #cmd = os.getcwd()+"/src/CCC.exe"
+        cmd = "../CCC.exe"
         p = subprocess.Popen(
             cmd, shell=True,
             stdout=subprocess.PIPE
