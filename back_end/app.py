@@ -32,7 +32,7 @@ def process():
         # execute .exe file
         # TODO: wait path
         #cmd = os.getcwd()+"/src/CCC.exe"
-        cmd = "a.out"
+        cmd = "./a.out"
         p = subprocess.call(
             cmd, shell=True,
             stdout=subprocess.PIPE
