@@ -16,7 +16,7 @@ void LR1Gramma::calcuLR0Derivations() {
             this->lr0_derivations.back().derive_idx = this->derivation_set[index].id;
         }
     }
-	std::cout << std::endl;
+	//std::cout << std::endl;
 }
 
 // TODO: 死循环: lr0_derivation_idx 为空
@@ -213,7 +213,7 @@ void LR1Gramma::calcuLR1Derivations() {
             this->goto_table_tmp[{ I.id, X.id }] = this->C.size()-1;
         }
     }
-	std::cout << std::endl;
+	//std::cout << std::endl;
 }
 
 void LR1Gramma::calcuActionTable() {
