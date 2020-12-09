@@ -13,7 +13,7 @@ std::vector<Token> Lexer::parse(const std::string& code) {
     return _token_list;
 }
 
-void Lexer::parsing_automata(const char& ch) {
+void Lexer::parsing_automata(char c) {
     enum STATE {
         INIT, NUM, ID, OPERATOR, ACCEPT
     };
@@ -21,20 +21,20 @@ void Lexer::parsing_automata(const char& ch) {
     static int lineNumber {0};
     static std::string token;
 
-    static auto init_accept_handle = [](const char ch) {
-        if (isdigit(ch)) {
-            token += ch;
+    static auto init_accept_handle = [](const char& c) {
+        if (isdigit(c)) {
+            token += c;
             state = STATE::NUM;
-        } else if (ispunct(ch)) {
-            token += ch;
+        } else if (ispunct(c)) {
+            token += c;
             state = STATE::OPERATOR;
-        } else if (isalpha(ch) || ch == '_') {
-            token += ch;
+        } else if (isalpha(c) || c == '_') {
+            token += c;
             state = STATE::ID;
-        } else if (isblank(ch)) {
+        } else if (isblank(c)) {
             state = STATE::INIT;
         } else {
-            throw std::runtime_error(std::string("Character ") + ch +" is not expected.");
+            throw std::runtime_error(std::string("Character ") + c + " is not expected.");
         }
     };
     static auto num_handle = [this](const char& ch) {
@@ -94,18 +94,22 @@ void Lexer::parsing_automata(const char& ch) {
         }
     };
 
+    if (c == FLUSH) {
+        c = ' ';
+    }
+
     switch (state) {
         case INIT:
-            init_accept_handle(ch);
+            init_accept_handle(c);
             break;
         case NUM:
-            num_handle(ch);
+            num_handle(c);
             break;
         case ID:
-            id_handle(ch);
+            id_handle(c);
             break;
         case OPERATOR:
-            op_handle(ch);
+            op_handle(c);
             break;
         default:
             throw std::runtime_error(std::string("Unexpected STATE") + static_cast<char>(state));
@@ -113,10 +117,10 @@ void Lexer::parsing_automata(const char& ch) {
 
     if (state == STATE::ACCEPT) {
         token.clear();
-        init_accept_handle(ch);
+        init_accept_handle(c);
     }
 
-    if (ch == '\n') {
+    if (c == '\n') {
         ++lineNumber;
     }
 }
