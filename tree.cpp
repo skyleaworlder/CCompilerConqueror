@@ -5,7 +5,7 @@
 using namespace std;
 
 //树的构造函数 传入词法输出 产生式 action_table goto_table
-tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> action_table, std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> goto_table)
+tree::tree(std::list<Token> token_list, std::vector<Derivation> deriv,std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> action_table, std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> goto_table)
 {
     bool acc = false;
     std::ofstream out_analyze;
@@ -22,7 +22,7 @@ tree::tree(std::list<token> token_list, std::vector<Derivation> deriv,std::map<s
     output_parsing_analyze(count_step, out_analyze, symStack, stateStack);
     out_analyze << "动作:" << "初始状态" << endl<<endl;
     //遍历词法分析的结果
-    for (list<token>::iterator iter = token_list.begin(); iter != token_list.end(); ) {
+    for (list<Token>::iterator iter = token_list.begin(); iter != token_list.end(); ) {
 
         //iter指向词法分析的当前的单词
         symbol_idx now_id = iter->id;

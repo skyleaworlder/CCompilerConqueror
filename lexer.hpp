@@ -47,8 +47,6 @@ public:
     std::vector<Token> parse(const std::string& code);
 
     void parsing_automata();
-
-    int get_terminal_id();
 };
 
 #endif // LEXER_HPP

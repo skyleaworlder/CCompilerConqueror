@@ -29,7 +29,7 @@ public:
     std::vector<tree_list> Tree;
 
 public:
-    tree(std::list<token> token_list,
+    tree(std::list<Token> token_list,
         std::vector<Derivation> deriv,
         std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> action_table,
         std::map<std::pair<close_pkg_idx, symbol_idx>, ActionDetail> goto_table

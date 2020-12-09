@@ -278,7 +278,7 @@ void test_tree(
 ) {
     using std::vector;
    /*
-    list<token> arr = {
+    list<Token> arr = {
         { 2, 1, "a", "a" },
         { 2, 1, "a", "a" },
         { 3, 1, "b", "b" },
@@ -287,7 +287,7 @@ void test_tree(
         { 0, 1, "#", "#" }
     };*/
 
-    list<token> arr = {
+    list<Token> arr = {
         { 2, 1, "int", "int" },
         { 31, 1, "<ID>", "main" },
         { 25, 1, "(", "(" },
@@ -317,6 +317,21 @@ void test_tree(
     a.print_tree();
 }
 
+void test_lexer() {
+    const std::vector<std::string> Terminals = {
+        "int", "float", "double", "void", "if", "else",
+        "while", "return", "+", "-", "*", "/", "=", "<", ">",
+        "<=", ">=", "==", "!=", "+=", "-=", "*=", "/=",
+        "(", ")", "{", "}", ";", ",", "<ID>", "<INT>"
+    };
+    Lexer lex(Terminals);
+    std::vector<Token> arr = lex.parse("int main ( ) { int a = 1 ; }");
+    for (const auto& elem : arr) {
+        cout << elem.id << "," << elem.line_number << ","
+            << elem.name << ", " << elem.value << std::endl;
+    }
+}
+
 int main() {
     // TODO: 有待优化的测试函数
     //test_split();
@@ -327,6 +342,7 @@ int main() {
     //test_cpp_static_method();
     //test_forrange();
 
+    /*
     std::string gramma_path = "testgramma.txt";
     std::ofstream out_gramma("./data/gramma.txt", std::ios::out);
     std::ofstream out_firstSet("./data/first_set.txt", std::ios::out);
@@ -341,4 +357,7 @@ int main() {
     test_action(gramma_path, out_action);
     test_goto(gramma_path, out_goto);
     test_tree(gramma_path); // bad test function! Zzz-Syyy what are you doing here!
+    */
+
+   test_lexer();
 }
