@@ -4,6 +4,10 @@
 #include <stdexcept>
 //#include <iostream>
 
+namespace {
+    const std::string endTerm {"#"};
+}
+
 const char Lexer::FLUSH;
 
 std::vector<Token> Lexer::parse(const std::string& code) {
@@ -12,11 +16,18 @@ std::vector<Token> Lexer::parse(const std::string& code) {
         parsing_automata(iter);
     }
     parsing_automata(FLUSH);
-    _token_list.push_back({ 0, 3, "#", "#"});
-    return _token_list;
+    _token_list.push_back({
+                              get_terminal_id(endTerm),
+                              _token_list.back().line_number,
+                              endTerm,
+                              endTerm
+                          });
+    auto retList {_token_list};
+    _token_list.clear();
+    return retList;
 }
 
-void Lexer::parsing_automata(char c) {
+void Lexer::parsing_automata(const char ch) {
     enum STATE {
         INIT, NUM, ID, OPERATOR, ACCEPT
     };
@@ -97,22 +108,18 @@ void Lexer::parsing_automata(char c) {
         }
     };
 
-    if (c == FLUSH) {
-        c = ' ';
-    }
-
     switch (state) {
         case INIT:
-            init_accept_handle(c);
+            init_accept_handle(ch);
             break;
         case NUM:
-            num_handle(c);
+            num_handle(ch);
             break;
         case ID:
-            id_handle(c);
+            id_handle(ch);
             break;
         case OPERATOR:
-            op_handle(c);
+            op_handle(ch);
             break;
         default:
             throw std::runtime_error(std::string("Unexpected STATE") + static_cast<char>(state));
@@ -120,10 +127,10 @@ void Lexer::parsing_automata(char c) {
 
     if (state == STATE::ACCEPT) {
         token.clear();
-        init_accept_handle(c);
+        init_accept_handle(ch);
     }
 
-    if (c == '\n') {
+    if (ch == '\n') {
         ++lineNumber;
     }
 }
