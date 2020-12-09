@@ -44,35 +44,39 @@ std::string read_file(std::string file_path) {
     in.open(file_path);
     std::string to_ret = "";
 
-    if (!in.is_open()) {
-        return "error";
-    }
-    else {
-        // 移动到最后
-        in.seekg(0, std::ios::end);
-        auto len = in.tellg();
-        in.seekg(0, std::ios::beg);
-
-        char *fileBuffer = nullptr;
-        fileBuffer = new char[static_cast<size_t>(len)+1];
-        memset(fileBuffer, 0, static_cast<size_t>(len)+1);
-        in.read(fileBuffer, len);
-        to_ret = fileBuffer;
-
-        delete[] fileBuffer;
+    while (in) {
+        to_ret += in.get();
     }
 
-    /* split 出一个没有 \n 的 string vector，但是为什么有问题 */
-    std::vector<std::string> arr = split(to_ret, "\n");
-    for (const auto& elem : arr)
-        to_ret += elem;
-
-    /* 针对 char = 10 (\n) 的 */
-    std::string tmp = "";
-    for (const auto& ch : to_ret)
-        if (int(ch) != 10)
-            tmp += ch;
-
-    in.close();
-    return tmp;
+    // if (!in.is_open()) {
+    //     return "error";
+    // }
+    // else {
+    //     // 移动到最后
+    //     in.seekg(0, std::ios::end);
+    //     auto len = in.tellg();
+    //     in.seekg(0, std::ios::beg);
+    //
+    //     char *fileBuffer = nullptr;
+    //     fileBuffer = new char[static_cast<size_t>(len)+1];
+    //     memset(fileBuffer, 0, static_cast<size_t>(len)+1);
+    //     in.read(fileBuffer, len);
+    //     to_ret = fileBuffer;
+    //
+    //     delete[] fileBuffer;
+    // }
+    //
+    // #<{(| split 出一个没有 \n 的 string vector，但是为什么有问题 |)}>#
+    // std::vector<std::string> arr = split(to_ret, "\n");
+    // for (const auto& elem : arr)
+    //     to_ret += elem;
+    //
+    // #<{(| 针对 char = 10 (\n) 的 |)}>#
+    // std::string tmp = "";
+    // for (const auto& ch : to_ret)
+    //     if (int(ch) != 10)
+    //         tmp += ch;
+    //
+    // in.close();
+    return to_ret;
 }
