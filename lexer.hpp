@@ -1,45 +1,54 @@
 #ifndef LEXER_HPP
 #define LEXER_HPP
 
+#include <utility>
 #include <vector>
 #include <string>
 #include <set>
 #include <list>
 
-const std::set<std::string> Terminal = {
-    "int", "float", "double", "void", "if", "else",
-    "while", "return", "+", "-", "*", "/", "=", "<", ">",
-    "<=", ">=", "==", "!=", "+=", "-=", "*=", "/=",
-    "(", ")", "{", "}", ";", ",", "<ID>", "<INT>"
-};
-
 /**
- * @brief 词法分析器 token.
- *          比如 { 0, 10, "int", "int" }, { 30, 1, "<INT>", "45" }
- * @param id: 唯一标识符, 根据 Terminal 中的排序得到
- * @param line_number: 行号，为后续开发做准备
- * @param name: 当前 token 在 Terminal 集中的值
- * @param value: 真正在输入程序中的表示
+ * @brief 词法分析器 token, 比如 { 0, 10, "int", "int" }, { 30, 1, "<INT>", "45" }
  */
-struct token {
+struct Token {
+    // 唯一标识符, 根据 Terminal 中的排序得到
     int id;
+    // 行号，为后续开发做准备
     int line_number;
+    // 当前 token 在 Terminal 集中的值
     std::string name;
+    // 真正在输入程序中的表示
     std::string value;
 };
 
 /**
  * @brief 词法分析器 Lexer
- * @param token_list: list<token> 类型，词法分析结束后的 token 存放位置
+ * @param terminals: 终结符表
  */
 class Lexer {
-
+    // std::vector<token> 类型，词法分析结束后的 token 存放位置
+    std::vector<Token> _token_list;
+    /**
+     * Example:
+     *  const std::vector<string> Terminals = {
+     *      "int", "float", "double", "void", "if", "else",
+     *      "while", "return", "+", "-", "*", "/", "=", "<", ">",
+     *      "<=", ">=", "==", "!=", "+=", "-=", "*=", "/=",
+     *      "(", ")", "{", "}", ";", ","
+     *  };
+     */
+    const std::vector<std::string> _terminals;
+    static const char FLUSH = -1;
+    void parsing_automata(const char& ch = FLUSH);
+    int get_terminal_id(std::string tokenVal);
+    bool is_valid_terminal(const std::string&);
 public:
-    std::list<token> token_list;
+    Lexer(std::vector<std::string>  terminals) : _terminals {std::move(terminals)} {};
+    std::vector<Token> parse(const std::string& code);
 
-public:
-    void LexParse(std::string file_path);
+    void parsing_automata();
 
+    int get_terminal_id();
 };
 
-#endif
+#endif // LEXER_HPP
