@@ -8,29 +8,29 @@ S -> Program
 ~ 声明
 Program -> GlbDefList
 GlbDefList -> GlbDef GlbDefList | $
-GlbDef     -> Type <ID> Delimiter | Type FuncTop Block FuncTop1
+GlbDef     -> Type <ID> ; | Type FuncTop Block FuncTop1
 
 ~ 函数定义
-FuncTop -> <ID> FuncTop2 LBracket VarList RBracket
-VarList -> Param Separator VarList | Param | $
+FuncTop -> <ID> FuncTop2 ( VarList )
+VarList -> Param , VarList | Param | $
 Param   -> Type <ID>
 FuncTop1 -> $
 FuncTop2 -> $
 
 ~ StsList is sentence list
 ~ 块定义: 变量定义 / 语句
-Block   -> Block1 LBrace DefList StsList RBrace
+Block   -> Block1 { DefList StsList }
 DefList -> Def DefList | $
 StsList -> Sts StsList | $
-Def     -> Type DefVariable Delimiter
+Def     -> Type DefVariable ;
 DefVariable -> <ID> | <ID> = Expression
-Sts     -> Expression Delimiter | RetSts | IfBlock | WhileBlock
+Sts     -> Expression ; | RetSts | IfBlock | WhileBlock
 Block1  -> $
 
-RetSts  -> return Expression Delimiter
-IfBlock -> if IfBlock1 LBracket Expression RBracket IfBlock2 Block IfElse
+RetSts  -> return Expression ;
+IfBlock -> if IfBlock1 ( Expression ) IfBlock2 Block IfElse
 IfElse  -> $ | IfElse1 else Block
-WhileBlock  -> while WhileBlock1 LBracket Expression RBracket WhileBlock2 Block
+WhileBlock  -> while WhileBlock1 ( Expression ) WhileBlock2 Block
 IfBlock1 -> $
 IfBlock2 -> $
 IfElse1 -> $
@@ -39,17 +39,11 @@ WhileBlock2 -> $
 
 
 ~ 表达式相关 Expression 无分号
-Expression -> <ID> Assign Expression | Expression Operator Expression | LBracket Expression RBracket | <ID> LBracket Arguments1 Arguments RBracket | <ID> | <INT> | $
-Arguments -> Expression Separator Arguments | Expression | $
+Expression -> <ID> Assign Expression | Expression Operator Expression | ( Expression ) | <ID> ( Arguments1 Arguments ) | <ID> | <INT> | $
+Arguments -> Expression , Arguments | Expression | $
 Arguments1 -> $
 
 ~ 直接推导终结符
 Type -> int | float | double | void
 Operator -> + | - | * | / | < | > | <= | >= | == | !=
 Assign  -> = | += | -= | *= | /=
-LBracket -> (
-RBracket -> )
-LBrace  -> {
-RBrace  -> }
-Delimiter -> ;
-Separator -> ,
