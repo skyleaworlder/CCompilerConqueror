@@ -1,39 +1,43 @@
 #include "lexer.hpp"
 #include <cctype>
 #include <algorithm>
+#include <stdexcept>
+
+const char Lexer::FLUSH;
 
 std::vector<Token> Lexer::parse(const std::string& code) {
-    for (auto iter = code.begin(); iter != code.end(); ++iter) {
-        parsing_automata(*iter);
+    for (const char& iter : code) {
+        parsing_automata(iter);
     }
     parsing_automata(FLUSH);
+    return _token_list;
 }
 
-void Lexer::parsing_automata(const char& ch) {
+void Lexer::parsing_automata(char c) {
     enum STATE {
         INIT, NUM, ID, OPERATOR, ACCEPT
     };
     static STATE state {STATE::INIT};
-    static int lineNumber {0};
+    static int lineNumber {1};
     static std::string token;
 
-    auto init_handle = [](const char& ch) {
-        if (isdigit(ch)) {
-            token += ch;
+    static auto init_accept_handle = [](const char& c) {
+        if (isdigit(c)) {
+            token += c;
             state = STATE::NUM;
-        } else if (ispunct(ch)) {
-            token += ch;
+        } else if (ispunct(c)) {
+            token += c;
             state = STATE::OPERATOR;
-        } else if (isalpha(ch) || ch == '_') {
-            token += ch;
+        } else if (isalpha(c) || c == '_') {
+            token += c;
             state = STATE::ID;
-        } else if (isblank(ch)) {
-            // Do nothing
+        } else if (isblank(c)) {
+            state = STATE::INIT;
         } else {
-            throw std::runtime_error(std::string("Character ") + ch +" is not expected.");
+            throw std::runtime_error(std::string("Character ") + c + " is not expected.");
         }
     };
-    auto num_handle = [this](const char& ch) {
+    static auto num_handle = [this](const char& ch) {
         if (isdigit(ch)) {
             token += ch;
         } else {
@@ -46,7 +50,7 @@ void Lexer::parsing_automata(const char& ch) {
             state = STATE::ACCEPT;
         }
     };
-    auto id_handle = [this](const char& ch) {
+    static auto id_handle = [this](const char& ch) {
         if (isalnum(ch) || ch == '_') {
             token += ch;
         } else {
@@ -72,7 +76,7 @@ void Lexer::parsing_automata(const char& ch) {
             state = STATE::ACCEPT;
         }
     };
-    auto op_handle = [this](const char& ch) {
+    static auto op_handle = [this](const char& ch) {
         /**
          * Operators are special, for it ends when extending the next character cannot
          * make the token found in _terminals
@@ -86,21 +90,26 @@ void Lexer::parsing_automata(const char& ch) {
                 token,
                 token
             });
+            state = STATE::ACCEPT;
         }
     };
 
+    if (c == FLUSH) {
+        c = ' ';
+    }
+
     switch (state) {
         case INIT:
-            init_handle(ch);
+            init_accept_handle(c);
             break;
         case NUM:
-            num_handle(ch);
+            num_handle(c);
             break;
         case ID:
-            id_handle(ch);
+            id_handle(c);
             break;
         case OPERATOR:
-            op_handle(ch);
+            op_handle(c);
             break;
         default:
             throw std::runtime_error(std::string("Unexpected STATE") + static_cast<char>(state));
@@ -108,15 +117,15 @@ void Lexer::parsing_automata(const char& ch) {
 
     if (state == STATE::ACCEPT) {
         token.clear();
-        init_handle(ch);
+        init_accept_handle(c);
     }
 
-    if (ch == '\n') {
+    if (c == '\n') {
         ++lineNumber;
     }
 }
 
-int Lexer::get_terminal_id(std::string tokenVal) {
+int Lexer::get_terminal_id(const std::string& tokenVal) {
     auto iter {std::find(_terminals.begin(), _terminals.end(), tokenVal)};
     if (iter == _terminals.end()) {
         // NOT FOUND
