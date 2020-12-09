@@ -2,14 +2,17 @@
 #include <cctype>
 #include <algorithm>
 #include <stdexcept>
+//#include <iostream>
 
 const char Lexer::FLUSH;
 
 std::vector<Token> Lexer::parse(const std::string& code) {
     for (const char& iter : code) {
+        //std::cout << int(iter) << std::endl;
         parsing_automata(iter);
     }
     parsing_automata(FLUSH);
+    _token_list.push_back({ 0, 3, "#", "#"});
     return _token_list;
 }
 
