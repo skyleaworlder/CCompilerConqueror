@@ -42,7 +42,7 @@ std::string trim(std::string input) {
 std::string read_file(std::string file_path) {
     std::ifstream in;
     in.open(file_path);
-    std::string to_ret;
+    std::string to_ret = "";
 
     if (!in.is_open()) {
         return "error";
@@ -62,6 +62,17 @@ std::string read_file(std::string file_path) {
         delete[] fileBuffer;
     }
 
+    /* split 出一个没有 \n 的 string vector，但是为什么有问题 */
+    std::vector<std::string> arr = split(to_ret, "\n");
+    for (const auto& elem : arr)
+        to_ret += elem;
+
+    /* 针对 char = 10 (\n) 的 */
+    std::string tmp = "";
+    for (const auto& ch : to_ret)
+        if (int(ch) != 10)
+            tmp += ch;
+
     in.close();
-    return to_ret;
+    return tmp;
 }
