@@ -9,7 +9,7 @@ tree::tree(std::list<Token> token_list, std::vector<Derivation> deriv,std::map<s
 {
     bool acc = false;
     std::ofstream out_analyze;
-    out_analyze.open("parsing_analyze.txt");
+    out_analyze.open("./data/parsing_analyze.txt");
     int count_step = 0;
     std::stack<TreeNode> symStack;
     std::stack<close_pkg_idx> stateStack;
@@ -53,7 +53,7 @@ tree::tree(std::list<Token> token_list, std::vector<Derivation> deriv,std::map<s
                 count_step++;
                 output_parsing_analyze(count_step, out_analyze, symStack, stateStack);
                 out_analyze << "动作：" << "成功" << endl << endl;
-                cout << "语法分析成功" << endl;
+                cout << "Syntax Parse success" << endl;
                 break;
             }
 
@@ -141,7 +141,7 @@ tree::tree(std::list<Token> token_list, std::vector<Derivation> deriv,std::map<s
     }
     if (!acc) {
         tree_root.record = -1;
-        cout << "语法分析失败" << endl;
+        cout << "Syntax Parse Failed" << endl;
     }
 
 }
