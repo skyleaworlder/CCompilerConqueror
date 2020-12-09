@@ -34,17 +34,23 @@ def process():
         data = request.get_json()
         code = data["code"]
         password = data["password"]
+        grammar = data["grammar"]
 
         if password != "skyleaworlder":
             return jsonify({ "tree_str": "error" })
 
-        f = open("code.txt", "w")
+        f = open("../code.txt", "w")
         f.write(code)
+        f.close()
+        f = open("../gramma.txt", "w")
+        f.write(grammar)
+        f.close()
+        
 
         # execute .exe file
         # TODO: wait path
         #cmd = os.getcwd()+"/src/CCC.exe"
-        cmd = "../CCC.exe"
+        cmd = "../a.out"
         p = subprocess.Popen(
             cmd, shell=True,
             stdout=subprocess.PIPE
