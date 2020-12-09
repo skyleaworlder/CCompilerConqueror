@@ -45,7 +45,7 @@ void Lexer::parsing_automata(const char ch) {
         } else if (isalpha(c) || c == '_') {
             token += c;
             state = STATE::ID;
-        } else if (isblank(c)) {
+        } else if (isblank(c) || c == '\n') {
             state = STATE::INIT;
         } else {
             throw std::runtime_error(std::string("Character ") + c + " is not expected.");

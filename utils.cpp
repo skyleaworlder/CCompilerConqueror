@@ -48,6 +48,8 @@ std::string read_file(std::string file_path) {
         to_ret += in.get();
     }
 
+    to_ret.pop_back();
+
     // if (!in.is_open()) {
     //     return "error";
     // }
