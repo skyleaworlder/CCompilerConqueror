@@ -18,7 +18,7 @@ void Lexer::parsing_automata(char c) {
         INIT, NUM, ID, OPERATOR, ACCEPT
     };
     static STATE state {STATE::INIT};
-    static int lineNumber {0};
+    static int lineNumber {1};
     static std::string token;
 
     static auto init_accept_handle = [](const char& c) {
